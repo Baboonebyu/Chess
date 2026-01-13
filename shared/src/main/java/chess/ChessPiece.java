@@ -69,7 +69,7 @@ public class ChessPiece {
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
-
-        return MoveCalculator.pieceCalc(board, myPosition);
+        MoveCalculator moves = new MoveCalculator(board, myPosition);
+        return moves.pieceCalc(board, myPosition);
     }
 }

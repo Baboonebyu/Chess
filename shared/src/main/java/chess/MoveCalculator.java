@@ -6,101 +6,100 @@ import java.util.Collection;
 import java.util.List;
 
 public class MoveCalculator {
-
+    private final List<ChessMove> movesList = new ArrayList<>();
     //Todo
     //Temp need to return list of moves not an empty one
     // I believe that this is where each move will be coded.
     // I might make functions to call for each type so the code is easier to read
-    //Todo make a inbounds/outofbounds function
+
     public MoveCalculator(ChessBoard board, ChessPosition myPosition) {
     }
 
-    public static Collection<ChessMove> pieceCalc(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> pieceCalc(ChessBoard board, ChessPosition myPosition) {
 
 
-    ChessPiece piece = board.getPiece(myPosition);
+        ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
-        //Todo don't hard code this in
-            return bishopCalc(myPosition);
+            return bishopCalc(myPosition,board);
 
-    }
+        }
         return List.of();
     }
-    private static boolean inbounds(int newRow, int newCol){
+
+    private  boolean inbounds(int newRow, int newCol) {
         if (newRow < 1 || newRow > 8)
             return false;
         else return newCol >= 1 && newCol <= 8;
 
     }
 
+    private  boolean validMoveCheck(int row, int col, int rowN, int colN, ChessBoard board) {
+        if (inbounds(rowN, colN)) {
+            System.out.printf("Inbounds %d,%d ", rowN, colN);
 
-    private static Collection<ChessMove> bishopCalc( ChessPosition myPosition){
 
-        List<ChessMove> BishopMoves = new ArrayList<>();
+            if (board.getPiece(new ChessPosition(rowN,colN)) == null){
+                movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
+                return true;}
+            else if (board.getPiece(new ChessPosition(rowN,colN)).getTeamColor() == board.getPiece(new ChessPosition(row,col)).getTeamColor())
+               return false;
+            else
+                movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
+                return false;
+
+        } else {
+            System.out.printf("Out of bounds %d,%d ", rowN, colN);
+            return false;
+
+        }
+    }
+
+
+    private Collection<ChessMove> bishopCalc(ChessPosition myPosition, ChessBoard board) {
+
+
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
 
         //left up
-        boolean inbound = true;
+        boolean validMove = true;
         int rowN = row;
         int colN = col;
-        while (inbound) {
-            rowN = rowN-1;
-            colN = colN+1;
-            if (inbounds(rowN,colN)) {
-                System.out.printf("Inbounds %d,%d ", rowN, colN);
-                BishopMoves.add(new ChessMove( new ChessPosition(row,col),new ChessPosition(rowN,colN), null));
+        while (validMove) {
+            rowN = rowN - 1;
+            colN = colN + 1;
+            validMove = validMoveCheck(row, col, rowN, colN, board);
+        }
+            //upright
+            validMove = true;
+            rowN = row;
+            colN = col;
+            while (validMove) {
+                rowN = rowN + 1;
+                colN = colN + 1;
+                validMove = validMoveCheck(row, col, rowN, colN, board);
             }
-            else
-            {System.out.printf("Out of bounds %d,%d ",rowN,colN);
-                inbound = false;}}
-        //upright
-        inbound = true;
-        rowN = row;
-        colN = col;
-        while (inbound) {
-            rowN = rowN+1;
-            colN = colN+1;
-            if (inbounds(rowN,colN)) {
-                System.out.printf("Inbounds %d,%d ", rowN, colN);
-                BishopMoves.add(new ChessMove( new ChessPosition(row,col),new ChessPosition(rowN,colN), null));
+            //downright
+            validMove = true;
+            rowN = row;
+            colN = col;
+            while (validMove) {
+                rowN = rowN + 1;
+                colN = colN - 1;
+                validMove = validMoveCheck(row, col, rowN, colN, board);
             }
-            else
-            {System.out.printf("Out of bounds %d,%d ",rowN,colN);
-                inbound = false;}}
-        //downright
-        inbound = true;
-        rowN = row;
-        colN = col;
-        while (inbound) {
-            rowN = rowN+1;
-            colN = colN-1;
-            if (inbounds(rowN,colN)) {
-                System.out.printf("Inbounds %d,%d ", rowN, colN);
-                BishopMoves.add(new ChessMove( new ChessPosition(row,col),new ChessPosition(rowN,colN), null));
+            //downLeft
+            validMove = true;
+            rowN = row;
+            colN = col;
+            while (validMove) {
+                rowN = rowN - 1;
+                colN = colN - 1;
+                validMove = validMoveCheck(row, col, rowN, colN, board);
             }
-            else
-            {System.out.printf("Out of bounds %d,%d ",rowN,colN);
-                inbound = false;}}
-        //downLeft
-        inbound = true;
-        rowN = row;
-        colN = col;
-        while (inbound) {
-            rowN = rowN-1;
-            colN = colN-1;
-            if (inbounds(rowN,colN)) {
-                System.out.printf("Inbounds %d,%d ", rowN, colN);
-                BishopMoves.add(new ChessMove( new ChessPosition(row,col),new ChessPosition(rowN,colN), null));
-            }
-            else
-            {System.out.printf("Out of bounds %d,%d ",rowN,colN);
-                inbound = false;}}
 
 
+            return movesList;
+        }
 
-
-        return BishopMoves;
     }
-
-}
