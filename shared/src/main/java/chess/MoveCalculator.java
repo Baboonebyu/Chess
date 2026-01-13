@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class MoveCalculator {
-    private List<ChessMove> movesList = new ArrayList<>();
+    private final List<ChessMove> movesList = new ArrayList<>();
     //Todo
     //Temp need to return list of moves not an empty one
     // I believe that this is where each move will be coded.
@@ -27,6 +27,10 @@ public class MoveCalculator {
             return rookCalc(myPosition,board);
         } else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN) {
             return queenCalc(myPosition,board);
+        } else if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+            return kingCalc(myPosition,board);
+        } else if ((piece.getPieceType() == ChessPiece.PieceType.KNIGHT)) {
+            return knightCalc(myPosition,board);
         }
         return List.of();
     }
@@ -148,15 +152,104 @@ public class MoveCalculator {
     }
     private Collection<ChessMove> queenCalc(ChessPosition myPosition, ChessBoard board) {
 
-
-
-
         bishopCalc(myPosition, board);
-
         rookCalc(myPosition, board);
-
-
 
         return movesList;
     }
+
+    private Collection<ChessMove> kingCalc(ChessPosition myPosition, ChessBoard board) {
+
+
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+
+
+        int rowN = row;
+        int colN = col;
+        //left up
+        rowN = row - 1;
+        colN = col + 1;
+        validMoveCheck(row, col, rowN, colN, board);
+
+        //upright
+        rowN = row + 1;
+        colN = col + 1;
+        validMoveCheck(row, col, rowN, colN, board);
+        //downright
+        rowN = row + 1;
+        colN = col - 1;
+        validMoveCheck(row, col, rowN, colN, board);
+        //downLeft
+        rowN = row - 1;
+        colN = col - 1;
+        validMoveCheck(row, col, rowN, colN, board);
+
+        //left
+        rowN = row - 1;
+        colN = col;
+        validMoveCheck(row, col, rowN, colN, board);
+        //up
+        rowN = row;
+        colN = col + 1;
+        validMoveCheck(row, col, rowN, colN, board);
+        //down
+        colN = col - 1;
+        validMoveCheck(row, col, rowN, colN, board);
+        //Right
+        rowN = row + 1;
+        colN = col;
+        validMoveCheck(row, col, rowN, colN, board);
+        return movesList;
+    }
+    private Collection<ChessMove> knightCalc(ChessPosition myPosition, ChessBoard board) {
+
+
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+
+
+        int rowN = row;
+        int colN = col;
+        //upLeft
+        rowN = row + 2;
+        colN = col - 1;
+        validMoveCheck(row, col, rowN, colN, board);
+
+        //upRight
+        rowN = row + 2;
+        colN = col + 1;
+        validMoveCheck(row, col, rowN, colN, board);
+
+        //rightUp
+        rowN = row + 1;
+        colN = col + 2;
+        validMoveCheck(row, col, rowN, colN, board);
+        //rightDown
+        rowN = row - 1;
+        colN = col + 2;
+        validMoveCheck(row, col, rowN, colN, board);
+
+        //downRight
+        rowN = row - 2;
+        colN = col + 1;
+        validMoveCheck(row, col, rowN, colN, board);
+        //downLeft
+        rowN = row - 2;
+        colN = col - 1;
+        validMoveCheck(row, col, rowN, colN, board);
+        //leftDown
+        rowN = row - 1;
+        colN = col - 2;
+
+        validMoveCheck(row, col, rowN, colN, board);
+        //leftUp
+        rowN = row + 1;
+        colN = col - 2;
+        validMoveCheck(row, col, rowN, colN, board);
+        return movesList;
+    }
+
     }
