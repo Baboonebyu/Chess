@@ -1,8 +1,8 @@
 package chess;
 
-import java.util.ArrayList;
+
 import java.util.Collection;
-import java.util.List;
+
 import java.util.Objects;
 
 /**
@@ -69,7 +69,7 @@ public class ChessPiece {
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
-        MoveCalculator moves = new MoveCalculator(board, myPosition);
+        MoveCalculator moves = new MoveCalculator();
         return moves.pieceCalc(board, myPosition);
     }
 }
