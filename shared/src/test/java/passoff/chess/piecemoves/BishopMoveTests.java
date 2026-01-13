@@ -7,6 +7,25 @@ import passoff.chess.TestUtilities;
 public class BishopMoveTests {
 
     @Test
+    public void bishopMoveTemp() {
+        TestUtilities.validateMoves("""
+                        | | | | | | | | |
+                        | | | | | | | | |
+                        | | | | | | | | |
+                        | | | |B| | | | |
+                        | | | | | | | | |
+                        | | | | | | | | |
+                        | | | | | | | | |
+                        | | | | | | | | |
+                        """,
+                new ChessPosition(5, 4),
+                new int[][]{
+                        {1,8},{2,1}
+                }
+        );
+    }
+
+    @Test
     public void bishopMoveUntilEdge() {
         TestUtilities.validateMoves("""
                         | | | | | | | | |
