@@ -68,28 +68,8 @@ public class ChessPiece {
 
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        //Todo
-        //Temp need to return list of moves not an empty one
-        // I believe that this is where each move will be coded.
-        // I might make functions to call for each type so the code is easier to read
-        //Todo make a inbounds/outofbounds function
-/*
-        ChessPiece piece = board.getPiece(myPosition);
-        if (piece.getPieceType() == PieceType.BISHOP) {
-            //Todo don't hard code this in
-            //equals method????
-            List<ChessMove> BishopMoves = new ArrayList<>();
-            int row = myPosition.getRow();
-            int col = myPosition.getColumn();
-            int drow= 8-row;
-            int dcol = 8-col;
-            BishopMoves.add(new ChessMove( new ChessPosition(5,4),new ChessPosition(1,8), null));
-            BishopMoves.add(new ChessMove( new ChessPosition(5,4),new ChessPosition(2,1), null));
 
-            return BishopMoves;
-            }
-        return List.of();
-        */
-        return MoveCalculator.piececalc(board, myPosition);
+
+        return MoveCalculator.pieceCalc(board, myPosition);
     }
 }
