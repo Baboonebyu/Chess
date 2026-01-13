@@ -42,6 +42,8 @@ public class ChessBoard {
      */
     public void resetBoard() {
         throw new RuntimeException("Not implemented");
+        //for (int i =1; i<9; i++);
+        //Todo set up board
     }
 
     @Override

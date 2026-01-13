@@ -9,10 +9,10 @@ import java.util.List;
 
 public class MoveCalculator {
     private final List<ChessMove> movesList = new ArrayList<>();
-    //Todo
-    //Temp need to return list of moves not an empty one
-    // I believe that this is where each move will be coded.
-    // I might make functions to call for each type so the code is easier to read
+    //Todo create a constructor? so the varables i need can be passed in
+    //Todo quit recalculating the piece and passing the board
+    //Todo figure out promotion and side capturing for pawn
+
 
 
 
@@ -31,8 +31,11 @@ public class MoveCalculator {
             return kingCalc(myPosition,board);
         } else if ((piece.getPieceType() == ChessPiece.PieceType.KNIGHT)) {
             return knightCalc(myPosition,board);
+        } else if ((piece.getPieceType() == ChessPiece.PieceType.PAWN)) {
+            return pawnCalc(myPosition,board,piece.getTeamColor());
+
         }
-        return List.of();
+        throw new RuntimeException("Not a valid type");
     }
 
     private  boolean inbounds(int newRow, int newCol) {
@@ -252,4 +255,68 @@ public class MoveCalculator {
         return movesList;
     }
 
+    private Collection<ChessMove> pawnCalc(ChessPosition myPosition, ChessBoard board, ChessGame.TeamColor teamColor) {
+
+
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        int rowN = row;
+        int colN = col;
+        if (teamColor == ChessGame.TeamColor.WHITE){
+            System.out.println("This pawn is on team white");
+            //forwardWhite
+            rowN = row + 1;
+            validMoveCheck(row, col, rowN, colN, board);
+            if (row == 2) {
+                rowN = row + 2;
+                validMoveCheck(row, col, rowN, colN, board);
+            }
+        }
+        if (teamColor == ChessGame.TeamColor.BLACK) {
+            System.out.println("This pawn is on team Black");
+            //forwardBlack
+            rowN = row - 1;
+            validMoveCheck(row, col, rowN, colN, board);
+            if (row == 7) {
+                rowN = row - 2;
+                validMoveCheck(row, col, rowN, colN, board);
+            }
+        }
+        return movesList;
+
+
+        /**
+        //left up
+        rowN = row - 1;
+        colN = col + 1;
+        validMoveCheck(row, col, rowN, colN, board);
+
+        //upright
+        rowN = row + 1;
+        colN = col + 1;
+        validMoveCheck(row, col, rowN, colN, board);
+        //downright
+        rowN = row + 1;
+        colN = col - 1;
+        validMoveCheck(row, col, rowN, colN, board);
+        //downLeft
+        rowN = row - 1;
+        colN = col - 1;
+        validMoveCheck(row, col, rowN, colN, board);
+
+        //left
+        rowN = row - 1;
+        colN = col;
+        validMoveCheck(row, col, rowN, colN, board);
+
+        //down
+        colN = col - 1;
+        validMoveCheck(row, col, rowN, colN, board);
+        //Right
+        rowN = row + 1;
+        colN = col;
+        validMoveCheck(row, col, rowN, colN, board);
+        return movesList;
+         */
+    }
     }
