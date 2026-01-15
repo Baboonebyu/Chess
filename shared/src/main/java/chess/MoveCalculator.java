@@ -10,7 +10,6 @@ import java.util.List;
 public class MoveCalculator {
     private final List<ChessMove> movesList = new ArrayList<>();
 
-    //Todo quit recalculating the piece and passing the board
     //Todo figure out promotion and side capturing for pawn
 
     public ChessBoard board;
@@ -260,7 +259,18 @@ public class MoveCalculator {
         return movesList;
     }
 
+    private void promotionCheck(int row, int col, int rowN, int colN){
+        if (rowN == 1 || rowN == 8) {
+            movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), ChessPiece.PieceType.BISHOP));
+            movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), ChessPiece.PieceType.ROOK));
+            movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), ChessPiece.PieceType.KNIGHT));
+            movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), ChessPiece.PieceType.QUEEN));
+        }
 
+        else
+            movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
+
+    }
     private Collection<ChessMove> pawnCalc( ChessGame.TeamColor teamColor) {
 
 
@@ -269,86 +279,53 @@ public class MoveCalculator {
         int rowN = row;
         int colN = col;
         if (teamColor == ChessGame.TeamColor.WHITE){
-            System.out.println("This pawn is on team white");
+            //System.out.println("This pawn is on team white");
             //forwardWhite
             rowN = row + 1;
             if (inbounds(rowN, colN) && board.getPiece(new ChessPosition(rowN,colN)) == null)
-                movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
+                promotionCheck(row, col, rowN, colN);
             if (row == 2) {
                 rowN = row + 2;
                 if ( board.getPiece(new ChessPosition(row+1,colN)) == null && board.getPiece(new ChessPosition(rowN,colN)) == null)
-                    movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
+                    promotionCheck(row, col, rowN, colN);
+
             }
             //captureLeft
             colN = col -1;
             rowN = row + 1;
             if (inbounds(rowN,colN) && board.getPiece(new ChessPosition(rowN,colN))!= null)
                 if(board.getPiece(new ChessPosition(row,col)).getTeamColor() != board.getPiece(new ChessPosition(rowN,colN)).getTeamColor())
-                    movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
+                    promotionCheck(row, col, rowN, colN);
             //captureRight
             colN = col +1;
             if (inbounds(rowN,colN) && board.getPiece(new ChessPosition(rowN,colN))!= null)
                 if(board.getPiece(new ChessPosition(row,col)).getTeamColor() != board.getPiece(new ChessPosition(rowN,colN)).getTeamColor())
-                    movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
+                    promotionCheck(row, col, rowN, colN);
         }
         if (teamColor == ChessGame.TeamColor.BLACK) {
-            System.out.println("This pawn is on team Black");
+            //System.out.println("This pawn is on team Black");
             //forwardBlack
             rowN = row - 1;
             if (inbounds(rowN, colN) && board.getPiece(new ChessPosition(rowN,colN)) == null)
-                movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
+                promotionCheck(row, col, rowN, colN);
             if (row == 7 ){
                 rowN = row - 2;
                 if ( board.getPiece(new ChessPosition(row-1,colN)) == null && board.getPiece(new ChessPosition(rowN,colN)) == null)
-                    movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
+                    promotionCheck(row, col, rowN, colN);
             }
             //captureLeft
             colN = col -1;
             rowN = row - 1;
             if (inbounds(rowN,colN) && board.getPiece(new ChessPosition(rowN,colN))!= null)
                 if(board.getPiece(new ChessPosition(row,col)).getTeamColor() != board.getPiece(new ChessPosition(rowN,colN)).getTeamColor())
-                    movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
+                    promotionCheck(row, col, rowN, colN);
             //captureRight
             colN = col +1;
             if (inbounds(rowN,colN) && board.getPiece(new ChessPosition(rowN,colN))!= null)
                 if(board.getPiece(new ChessPosition(row,col)).getTeamColor() != board.getPiece(new ChessPosition(rowN,colN)).getTeamColor())
-                    movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
+                    promotionCheck(row, col, rowN, colN);
         }
         return movesList;
 
-
-        /**
-        //left up
-        rowN = row - 1;
-        colN = col + 1;
-        validMoveCheck(row, col, rowN, colN, board);
-
-        //upright
-        rowN = row + 1;
-        colN = col + 1;
-        validMoveCheck(row, col, rowN, colN, board);
-        //downright
-        rowN = row + 1;
-        colN = col - 1;
-        validMoveCheck(row, col, rowN, colN, board);
-        //downLeft
-        rowN = row - 1;
-        colN = col - 1;
-        validMoveCheck(row, col, rowN, colN, board);
-
-        //left
-        rowN = row - 1;
-        colN = col;
-        validMoveCheck(row, col, rowN, colN, board);
-
-        //down
-        colN = col - 1;
-        validMoveCheck(row, col, rowN, colN, board);
-        //Right
-        rowN = row + 1;
-        colN = col;
-        validMoveCheck(row, col, rowN, colN, board);
-        return movesList;
-         */
     }
     }
