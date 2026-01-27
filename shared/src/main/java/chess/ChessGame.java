@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -11,6 +12,7 @@ import java.util.Collection;
 public class ChessGame {
     private TeamColor playerTurn = TeamColor.WHITE;
     private ChessBoard currentBoard = new ChessBoard();
+    
 
 
 
@@ -51,7 +53,20 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece Piece = currentBoard.getPiece(startPosition);
+        if( Piece == null){
+            return List.of();
+        }
+        if(Piece.getTeamColor() == playerTurn) {
+            Collection<ChessMove> moveList = Piece.pieceMoves(currentBoard, startPosition);
+            // add in things to remove the moves that are invalid
+            return moveList;
+        }
+        else {
+            return List.of();
+        }
+
+
     }
 
     /**
@@ -61,7 +76,27 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+        ChessPiece.PieceType promote = move.getPromotionPiece();
+        Collection<ChessMove> moveList = validMoves(start);
+
+        if( moveList.contains(move)){
+        ChessPiece Piece = currentBoard.getPiece(start);
+        currentBoard.addPiece(start,null);
+        if (promote == null){
+            currentBoard.addPiece(end,Piece);
+        } else {
+            TeamColor color = Piece.getTeamColor();
+            currentBoard.addPiece(end, new ChessPiece(color,promote));
+        }
+        if(Piece.getTeamColor() == TeamColor.WHITE){ playerTurn = TeamColor.BLACK;}
+        else
+            playerTurn = TeamColor.WHITE;
+        }
+        else
+            throw new InvalidMoveException("Make move was given an Invalid move");
+
     }
 
     /**
