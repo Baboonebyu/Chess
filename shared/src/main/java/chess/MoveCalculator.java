@@ -1,8 +1,5 @@
 package chess;
 
-
-
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,10 +7,8 @@ import java.util.List;
 public class MoveCalculator {
     private final List<ChessMove> movesList = new ArrayList<>();
 
-    //Todo figure out promotion and side capturing for pawn
-
-    public ChessBoard board;
-    public ChessPosition myPosition;
+    private final ChessBoard board;
+    private final ChessPosition myPosition;
 
     public MoveCalculator(ChessBoard board, ChessPosition myPosition) {
         this.board = board;
@@ -43,30 +38,32 @@ public class MoveCalculator {
     }
 
     private  boolean inbounds(int newRow, int newCol) {
-        if (newRow < 1 || newRow > 8)
+        if (newRow < 1 || newRow > 8) {
             return false;
-        else return newCol >= 1 && newCol <= 8;
+        }
+        else {
+            return newCol >= 1 && newCol <= 8;
+        }
 
     }
 
     private  boolean validMoveCheck(int row, int col, int rowN, int colN) {
         if (inbounds(rowN, colN)) {
-            System.out.printf("Inbounds %d,%d ", rowN, colN);
-
-
+           // System.out.printf("Inbounds %d,%d ", rowN, colN);
             if (board.getPiece(new ChessPosition(rowN,colN)) == null){
                 movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
                 return true;}
-            else if (board.getPiece(new ChessPosition(rowN,colN)).getTeamColor() == board.getPiece(new ChessPosition(row,col)).getTeamColor())
-               return false;
-            else
+            else if (board.getPiece(new ChessPosition(rowN,colN)).getTeamColor() == board.getPiece(new ChessPosition(row,col)).getTeamColor()) {
+                return false;
+            }
+            else {
+                //There is a piece there, but it's part of the other team.
                 movesList.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(rowN, colN), null));
                 return false;
-
+            }
         } else {
-            System.out.printf("Out of bounds %d,%d ", rowN, colN);
+          //  System.out.printf("Out of bounds %d,%d ", rowN, colN);
             return false;
-
         }
     }
 
@@ -77,7 +74,7 @@ public class MoveCalculator {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
 
-        //left up
+        //downRight
         boolean validMove = true;
         int rowN = row;
         int colN = col;
@@ -95,7 +92,7 @@ public class MoveCalculator {
                 colN = colN + 1;
                 validMove = validMoveCheck(row, col, rowN, colN);
             }
-            //downright
+            //UpLeft
             validMove = true;
             rowN = row;
             colN = col;

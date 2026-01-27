@@ -45,8 +45,9 @@ public class ChessBoard {
     public void resetBoard() {
         ChessGame.TeamColor color;
         color = ChessGame.TeamColor.WHITE;
-        for (int i = 1; i < 9; i++)
+        for (int i = 1; i < 9; i++) {
             addPiece(new ChessPosition(2, i), new ChessPiece(color, ChessPiece.PieceType.PAWN));
+        }
         addPiece(new ChessPosition(1, 1), new ChessPiece(color, ChessPiece.PieceType.ROOK));
         addPiece(new ChessPosition(1, 8), new ChessPiece(color, ChessPiece.PieceType.ROOK));
         addPiece(new ChessPosition(1, 2), new ChessPiece(color, ChessPiece.PieceType.KNIGHT));
@@ -56,8 +57,9 @@ public class ChessBoard {
         addPiece(new ChessPosition(1, 4), new ChessPiece(color, ChessPiece.PieceType.QUEEN));
         addPiece(new ChessPosition(1, 5), new ChessPiece(color, ChessPiece.PieceType.KING));
         color = ChessGame.TeamColor.BLACK;
-        for (int i = 1; i < 9; i++)
+        for (int i = 1; i < 9; i++) {
             addPiece(new ChessPosition(7, i), new ChessPiece(color, ChessPiece.PieceType.PAWN));
+        }
         addPiece(new ChessPosition(8, 1), new ChessPiece(color, ChessPiece.PieceType.ROOK));
         addPiece(new ChessPosition(8, 8), new ChessPiece(color, ChessPiece.PieceType.ROOK));
         addPiece(new ChessPosition(8, 2), new ChessPiece(color, ChessPiece.PieceType.KNIGHT));
