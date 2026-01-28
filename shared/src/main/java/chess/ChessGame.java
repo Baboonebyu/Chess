@@ -63,26 +63,29 @@ public class ChessGame {
             return List.of();
         }
         TeamColor color = Piece.getTeamColor();
-
         Collection<ChessMove> moveList = Piece.pieceMoves(currentBoard, startPosition);
+        Collection<ChessMove> needsRemoved = new ArrayList<ChessMove>();
             //todo
             // for castling have variables for each rook and each king.
 
-        // this should prevent moving into check. might make it a method to call.
+        // this should prevent moving into check.
 
-        if(!isInCheck(color)){
+
             for (ChessMove move: moveList) {
-                boolean needsRemoved = false;
+                ChessPiece putback = currentBoard.getPiece(move.getEndPosition());
                 currentBoard.addPiece(move.getEndPosition(), Piece);
+                currentBoard.addPiece(move.getStartPosition(), null);
                 if (isInCheck(color)) {
-                    needsRemoved = true;
+                    needsRemoved.add(move);
+
                 }
-                currentBoard.addPiece(move.getEndPosition(), null);
+                currentBoard.addPiece(move.getEndPosition(), putback);
                 currentBoard.addPiece(move.getStartPosition(),Piece);
-                if (needsRemoved){moveList.remove(move);}
+
             }
-            return moveList;
-        }
+
+
+        moveList.removeAll(needsRemoved);
 
 
         //todo
@@ -153,7 +156,7 @@ public class ChessGame {
 
     public boolean isInCheck(TeamColor teamColor) {
 
-        ChessPosition kingPosition;
+        ChessPosition kingPosition = null;
         //todo
         // check from the king outwards
         // how do i find the king?
@@ -163,7 +166,7 @@ public class ChessGame {
             throw new RuntimeException("is check can't find the king");
         }
 
-        System.out.printf("The king for team %s is at %s", teamColor, kingPosition);
+        //System.out.printf("The king for team %s is at %s", teamColor, kingPosition);
 
         Collection<ChessPosition> otherTeamEndPositions = new ArrayList<ChessPosition>();
         for (int i = 1; i<9; i++){
@@ -190,7 +193,7 @@ public class ChessGame {
     private ChessPosition findKing(TeamColor teamColor) {
         ChessPosition kingPosition = null;
         if ( teamColor == TeamColor.WHITE){
-            if (whiteKing == null){
+
                 //find king
                 for (int i = 1; i<9; i++){
                     for (int j = 1; j<9; j++){
@@ -206,14 +209,12 @@ public class ChessGame {
                     }
                     }
                 }
-            }
-            else{
-                kingPosition = whiteKing;
-            }
+
+
         }
         else
         {
-            if (blackKing == null){
+
                 //find king
                 for (int i = 1; i<9; i++){
                     for (int j = 1; j<9; j++){
@@ -229,10 +230,8 @@ public class ChessGame {
                         }
                     }
                 }
-            }
-            else{
-                kingPosition = blackKing;
-            }
+
+
         }
         return kingPosition;
     }
