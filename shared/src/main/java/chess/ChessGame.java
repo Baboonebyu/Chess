@@ -191,27 +191,6 @@ public class ChessGame {
 
     private ChessPosition findKing(TeamColor teamColor) {
         ChessPosition kingPosition = null;
-        if ( teamColor == TeamColor.WHITE){
-
-                //find king
-                for (int i = 1; i<9; i++){
-                    for (int j = 1; j<9; j++){
-                        if(currentBoard.getPiece(new ChessPosition(i,j))!= null) {
-                        ChessPiece observed = currentBoard.getPiece(new ChessPosition(i,j));
-                        if (observed != null && observed.getPieceType() == ChessPiece.PieceType.KING && observed.getTeamColor() == teamColor) {
-                            kingPosition = new ChessPosition(i, j);
-                            break;
-
-                        }
-                    }
-                    }
-                }
-
-
-        }
-        else
-        {
-
                 //find king
                 for (int i = 1; i<9; i++){
                     for (int j = 1; j<9; j++){
@@ -228,7 +207,6 @@ public class ChessGame {
                 }
 
 
-        }
         return kingPosition;
     }
 
