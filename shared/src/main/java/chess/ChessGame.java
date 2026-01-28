@@ -70,6 +70,8 @@ public class ChessGame {
             // add in things to remove the moves that are invalid
             // check from the king outward?
             // for castling have variables for each rook and each king.
+
+
         return moveList;
 
 
@@ -226,6 +228,9 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        if(!isInCheck(teamColor)){
+            return false;
+        }
         throw new RuntimeException("Not implemented");
     }
 
@@ -237,9 +242,23 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
-        //todo
-        // this would be if no moves remain but not in check
+        if(isInCheck(teamColor)){
+            return false;
+        }
+        if(isInCheckmate(teamColor)){return false;}
+
+        for (int i = 1; i<9; i++){
+            for (int j = 1; j<9; j++) {
+                if(currentBoard.getPiece(new ChessPosition(i,j)) != null){
+                    if(currentBoard.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor){
+                        if(validMoves(new ChessPosition(i,j))!= null){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
