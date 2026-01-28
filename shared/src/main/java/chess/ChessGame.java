@@ -56,13 +56,13 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessPiece Piece = currentBoard.getPiece(startPosition);
+        ChessPiece piece = currentBoard.getPiece(startPosition);
 
-        if( Piece == null){
+        if( piece == null){
             return List.of();
         }
-        TeamColor color = Piece.getTeamColor();
-        Collection<ChessMove> moveList = Piece.pieceMoves(currentBoard, startPosition);
+        TeamColor color = piece.getTeamColor();
+        Collection<ChessMove> moveList = piece.pieceMoves(currentBoard, startPosition);
         Collection<ChessMove> needsRemoved = new ArrayList<>();
             //todo
             // for castling have variables for each rook and each king.
@@ -74,7 +74,7 @@ public class ChessGame {
 
 
                 ChessPiece putback = currentBoard.getPiece(move.getEndPosition());
-                currentBoard.addPiece(move.getEndPosition(), Piece);
+                currentBoard.addPiece(move.getEndPosition(), piece);
                 currentBoard.addPiece(move.getStartPosition(), null);
                 if (isInCheck(color)) {
                     needsRemoved.add(move);
@@ -82,7 +82,7 @@ public class ChessGame {
 
                 }
                 currentBoard.addPiece(move.getEndPosition(), putback);
-                currentBoard.addPiece(move.getStartPosition(),Piece);
+                currentBoard.addPiece(move.getStartPosition(),piece);
 
             }
 
@@ -134,12 +134,13 @@ public class ChessGame {
                 currentBoard.addPiece(end, new ChessPiece(color,promote));
             }
             if(piece.getTeamColor() == TeamColor.WHITE){ playerTurn = TeamColor.BLACK;}
-            else
+            else {
                 playerTurn = TeamColor.WHITE;
+            }
         }
-        else
+        else {
             throw new InvalidMoveException("Make move was given an Invalid move");
-
+        }
     }
 
     /**
