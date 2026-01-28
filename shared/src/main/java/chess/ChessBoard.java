@@ -84,4 +84,17 @@ public class ChessBoard {
     public int hashCode() {
         return Arrays.deepHashCode(squares);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder grid = new StringBuilder("");
+        for (int i = 0; i<8; i++) {
+            grid.append(String.format("|%s||%s||%s||%s|", squares[i][0], squares[i][1], squares[i][2], squares[i][3]));
+            grid.append(String.format("|%s||%s||%s||%s| %n", squares[i][4], squares[i][5], squares[i][6], squares[i][7]));
+        }
+        String gridString = grid.toString();
+
+
+        return gridString.replaceAll("null", " ");
+    }
 }

@@ -58,20 +58,36 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece Piece = currentBoard.getPiece(startPosition);
+
         if( Piece == null){
             return List.of();
         }
-        //todo
-        // move the player turn and no piece functions
-        // but the no piece function needs to stay for move list.
+        TeamColor color = Piece.getTeamColor();
 
         Collection<ChessMove> moveList = Piece.pieceMoves(currentBoard, startPosition);
             //todo
-            // add in things to remove the moves that are invalid
-            // check from the king outward?
             // for castling have variables for each rook and each king.
 
+        // this should prevent moving into check. might make it a method to call.
 
+        if(!isInCheck(color)){
+            for (ChessMove move: moveList) {
+                boolean needsRemoved = false;
+                currentBoard.addPiece(move.getEndPosition(), Piece);
+                if (isInCheck(color)) {
+                    needsRemoved = true;
+                }
+                currentBoard.addPiece(move.getEndPosition(), null);
+                currentBoard.addPiece(move.getStartPosition(),Piece);
+                if (needsRemoved){moveList.remove(move);}
+            }
+            return moveList;
+        }
+
+
+        //todo
+        // remove moves
+        // make sure moves stop check
         return moveList;
 
 
