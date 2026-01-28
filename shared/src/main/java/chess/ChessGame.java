@@ -232,16 +232,10 @@ public class ChessGame {
     private boolean checkForAnyMoves(TeamColor teamColor) {
         for (int i = 1; i<9; i++){
             for (int j = 1; j<9; j++) {
-                if(currentBoard.getPiece(new ChessPosition(i,j)) != null){
-                    if(currentBoard.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor){
-                        if(validMoves(new ChessPosition(i,j)).isEmpty()){
-                          // System.out.println("this is empty");
-                        }
-                        else if(validMoves(new ChessPosition(i,j))!= null ){
-                           // System.out.println(i);
-                            // System.out.println(j);
-                            return false;
-                        }
+                ChessPiece piece = currentBoard.getPiece(new ChessPosition(i, j));
+                if(piece != null && piece.getTeamColor() == teamColor){
+                    if(validMoves(new ChessPosition(i,j))!= null && !validMoves(new ChessPosition(i,j)).isEmpty() ){
+                        return false;
                     }
                 }
             }
