@@ -169,8 +169,8 @@ public class ChessGame {
         for (int i = 1; i<9; i++){
             for (int j = 1; j<9; j++) {
                 ChessPiece observedPiece = currentBoard.getPiece(new ChessPosition(i, j));
-                if (observedPiece != null) {
-                    if (observedPiece.getTeamColor() != teamColor) {
+                if (observedPiece != null && observedPiece.getTeamColor() != teamColor) {
+
                         Collection<ChessMove> otherTeamMoves = observedPiece.pieceMoves(currentBoard, new ChessPosition(i, j));
                         for (ChessMove move : otherTeamMoves) {
                             otherTeamEndPositions.add(move.getEndPosition());
@@ -178,7 +178,7 @@ public class ChessGame {
                         }
 
 
-                    }
+
 
                 }
 
@@ -198,11 +198,10 @@ public class ChessGame {
                     for (int j = 1; j<9; j++){
                         if(currentBoard.getPiece(new ChessPosition(i,j))!= null) {
                         ChessPiece observed = currentBoard.getPiece(new ChessPosition(i,j));
-                        if (observed != null) {
-                            if (observed.getPieceType() == ChessPiece.PieceType.KING && observed.getTeamColor() == teamColor) {
-                                kingPosition = new ChessPosition(i, j);
-                                break;
-                            }
+                        if (observed != null && observed.getPieceType() == ChessPiece.PieceType.KING && observed.getTeamColor() == teamColor) {
+                            kingPosition = new ChessPosition(i, j);
+                            break;
+
                         }
                     }
                     }
@@ -247,7 +246,7 @@ public class ChessGame {
 
       //  System.out.println(checkForAnyMoves(teamColor));
 
-        return !checkForAnyMoves(teamColor);
+        return checkForAnyMoves(teamColor);
 
 
     }
@@ -263,13 +262,13 @@ public class ChessGame {
                         else if(validMoves(new ChessPosition(i,j))!= null ){
                            // System.out.println(i);
                             // System.out.println(j);
-                            return true;
+                            return false;
                         }
                     }
                 }
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -289,7 +288,7 @@ public class ChessGame {
             return false;}
 
 
-        if (!checkForAnyMoves(teamColor)){
+        if (checkForAnyMoves(teamColor)){
             System.out.println("no vaid move");
             if(teamColor == playerTurn){
                 System.out.println("is your turn");
