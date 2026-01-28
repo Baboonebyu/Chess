@@ -244,10 +244,12 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if(!isInCheck(teamColor)){
+            System.out.println("not in check - checkmate function");
             return false;
         }
-
-        return checkForAnyMoves(teamColor);
+        System.out.println("any valid moves");
+        System.out.println(checkForAnyMoves(teamColor));
+        return !checkForAnyMoves(teamColor);
 
 
     }
@@ -276,11 +278,24 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         if(isInCheck(teamColor)){
+            System.out.println("not stalemate but check");
             return false;
         }
-        if(isInCheckmate(teamColor)){return false;}
+        if(isInCheckmate(teamColor)){
+            System.out.println("This is checkmate");
+            return false;}
 
-        return checkForAnyMoves(teamColor);
+
+        if (!checkForAnyMoves(teamColor) ){
+            System.out.println("no vaid move");
+            if(teamColor == playerTurn){
+                System.out.println("is your turn");
+                return true;
+            }
+        }
+
+        return false;
+
     }
 
     /**
