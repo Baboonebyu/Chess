@@ -5,9 +5,15 @@ public class Request {
 
 }
 
-class RegistarRequest extends Request {
+class RegisterRequest extends Request {
     String username;
     String password;
     String email;
+
+}
+
+class LoginRequest extends Request {
+    String username;
+    String password;
 
 }
