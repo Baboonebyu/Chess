@@ -1,17 +1,23 @@
 package server;
 
+import Model.RegisterRequest;
+import Model.Request;
+import Model.Response;
 import com.google.gson.Gson;
 import io.javalin.http.Context;
-
-import org.jetbrains.annotations.NotNull;
 
 public abstract class Handler implements io.javalin.http.Handler {
 
 
-    public Request fromJson(String data, Class<RegisterRequest> requestType){
+    public <T> Request fromJson(String data, Class<T> requestType){
         Gson gson = new Gson();
-        return gson.fromJson(data, requestType);
+        return (Request) gson.fromJson(data, requestType);
     }
+    public Object toJson(Response response){
+        Gson gson = new Gson();
+        return gson.toJson(response);
+    }
+
 }
 
 
@@ -28,13 +34,20 @@ class HelloBYUHandler extends Handler {
             RegisterRequest request = (RegisterRequest) fromJson(context.body(), RegisterRequest.class);
             System.out.println(request);
 
-            context.result("Hello New user!");
+
+            Response response = new Response();
 
 
-            //RegisterRequest request = ()
-            //fromjson
+            Object jsonResponse = toJson(response);
+            context.result(jsonResponse.toString());
+
+
+
 
         }
 }
+
+
+
 
 
