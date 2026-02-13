@@ -1,8 +1,9 @@
 package server;
 
-import Model.RegisterRequest;
 import Model.Request;
+import Model.Request.RegisterRequest;
 import Model.Response;
+
 import com.google.gson.Gson;
 import io.javalin.http.Context;
 
