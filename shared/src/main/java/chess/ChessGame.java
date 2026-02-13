@@ -15,10 +15,6 @@ public class ChessGame {
     private TeamColor playerTurn = TeamColor.WHITE;
     private ChessBoard currentBoard = new ChessBoard();
 
-    
-
-
-
     public ChessGame() {
     currentBoard.resetBoard();
     }
@@ -64,42 +60,23 @@ public class ChessGame {
         TeamColor color = piece.getTeamColor();
         Collection<ChessMove> moveList = piece.pieceMoves(currentBoard, startPosition);
         Collection<ChessMove> needsRemoved = new ArrayList<>();
-            //todo
-            // for castling have variables for each rook and each king.
-
         // this should prevent moving into check.
-
-
             for (ChessMove move: moveList) {
-
-
                 ChessPiece putback = currentBoard.getPiece(move.getEndPosition());
                 currentBoard.addPiece(move.getEndPosition(), piece);
                 currentBoard.addPiece(move.getStartPosition(), null);
                 if (isInCheck(color)) {
                     needsRemoved.add(move);
-
-
                 }
                 currentBoard.addPiece(move.getEndPosition(), putback);
                 currentBoard.addPiece(move.getStartPosition(),piece);
-
             }
-
-
         moveList.removeAll(needsRemoved);
+
+
       //  System.out.println(moveList);
-
-        //todo
-        // remove moves
-        // make sure moves stop check
         return moveList;
-
-
-
-
     }
-
     /**
      * Makes a move in a chess game
      *
@@ -153,10 +130,6 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
 
         ChessPosition kingPosition;
-        //todo
-        // check from the king outwards
-        // how do i find the king?
-        // go through each position till the correct king is found?
         kingPosition = findKing(teamColor);
         if (kingPosition == null){
             throw new RuntimeException("is check can't find the king");
@@ -192,6 +165,7 @@ public class ChessGame {
     private ChessPosition findKing(TeamColor teamColor) {
         ChessPosition kingPosition = null;
                 //find king
+                //loop through the board
                 for (int i = 1; i<9; i++){
                     for (int j = 1; j<9; j++){
 
