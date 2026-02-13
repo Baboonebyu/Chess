@@ -2,15 +2,11 @@ package server;
 
 import com.google.gson.Gson;
 import io.javalin.http.Context;
+
 import org.jetbrains.annotations.NotNull;
 
-public class Handler implements io.javalin.http.Handler {
+public abstract class Handler implements io.javalin.http.Handler {
 
-
-    @Override
-    public void handle(@NotNull Context context) throws Exception {
-
-    }
 
     public Request fromJson(String data, Class<RegistarRequest> requestType){
         Gson gson = new Gson();
@@ -29,8 +25,8 @@ class HelloBYUHandler extends Handler {
         public void handle(Context context) {
             context.contentType("application/json");
 
-            RegistarRequest request = (RegistarRequest) fromJson("", RegistarRequest.class);
-
+            RegistarRequest request = (RegistarRequest) fromJson(context.body(), RegistarRequest.class);
+            System.out.println(request);
 
             context.result("Hello New user!");
 
