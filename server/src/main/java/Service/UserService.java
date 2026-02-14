@@ -1,8 +1,8 @@
 package Service;
 
-import Model.UserData;
+import Model.Response;
 import dataaccess.DataAccessException;
-import dataaccess.MemoryDataAccess;
+import dataaccess.UserMemoryDataAccess;
 import dataaccess.UserDAO;
 import Model.Request.RegisterRequest;
 import Model.Response.RegisterResponse;
@@ -11,7 +11,7 @@ import Model.Response.RegisterResponse;
 public class UserService {
 
 
-    private UserDAO userDAO = new MemoryDataAccess();
+    private UserDAO userDAO = new UserMemoryDataAccess();
 
 
     public RegisterResponse register(RegisterRequest request) throws DataAccessException {
@@ -21,8 +21,17 @@ public class UserService {
         String email = request.getEmail();
         if (userDAO.getUser(username) == null){
             userDAO.createUser(username,password,email);
-            System.out.println("Made a new user");
-            System.out.println(username);
+            //System.out.println("Made a new user");
+           // System.out.println(username);
+
+        }
+        else {
+
+            RegisterResponse response = new RegisterResponse();
+            response.setMessage("Error Username Already taken");
+
+            return response;
+
         }
 
 

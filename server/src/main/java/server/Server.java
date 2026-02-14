@@ -1,8 +1,6 @@
 package server;
 
-import dataaccess.MemoryDataAccess;
 import io.javalin.*;
-import io.javalin.http.*;
 
 public class Server {
 

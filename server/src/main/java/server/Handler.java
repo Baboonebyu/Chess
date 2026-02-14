@@ -9,9 +9,11 @@ import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import io.javalin.http.Context;
 
+import java.util.Objects;
+
 public abstract class Handler implements io.javalin.http.Handler {
 
-
+    UserService service = new UserService();
     public <T> Request fromJson(String data, Class<T> requestType){
         Gson gson = new Gson();
         return (Request) gson.fromJson(data, requestType);
@@ -37,10 +39,15 @@ class HelloBYUHandler extends Handler {
             RegisterRequest request = (RegisterRequest) fromJson(context.body(), RegisterRequest.class);
             System.out.println(request);
 
-            UserService service = new UserService();
-            service.register(request);
 
-            Response response = new Response();
+
+
+            Response response = service.register(request);
+            if (response!= null && Objects.equals(response.getMessage(), "Error Username Already taken")){
+                context.status(403);
+                //todo
+                //make this better
+            }
 
 
             Object jsonResponse = toJson(response);
