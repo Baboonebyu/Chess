@@ -14,8 +14,15 @@ public class Response {
     }
 
     public static class RegisterResponse extends Response{
-        String authtoken;
         String username;
+        String authToken;
+
+        public void setAuthToken(String authToken){
+            this.authToken = authToken;
+        }
+        public void setUsername(String username){
+            this.username = username;
+        }
         //todo i don't think this should be static
 
     }

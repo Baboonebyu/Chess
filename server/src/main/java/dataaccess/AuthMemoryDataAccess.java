@@ -7,9 +7,10 @@ import dataaccess.UserDAO;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.UUID;
 
 public class AuthMemoryDataAccess implements AuthDAO {
-    ArrayList<AuthData> Auths = new ArrayList<>();
+    ArrayList<AuthData> auths = new ArrayList<>();
 
     public AuthData getAuth(String authToken) throws DataAccessException {
 
@@ -17,8 +18,11 @@ public class AuthMemoryDataAccess implements AuthDAO {
     }
 
     public AuthData createAuth(String username) throws DataAccessException {
+        String authToken = UUID.randomUUID().toString();
+        AuthData authData = new AuthData(authToken, username);
+        auths.add(authData);
+        System.out.println(auths);
 
-
-        return null;
+        return authData;
     }
 }

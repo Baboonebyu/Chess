@@ -1,9 +1,8 @@
 package Service;
 
+import Model.AuthData;
 import Model.Response;
-import dataaccess.DataAccessException;
-import dataaccess.UserMemoryDataAccess;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import Model.Request.RegisterRequest;
 import Model.Response.RegisterResponse;
 
@@ -11,7 +10,8 @@ import Model.Response.RegisterResponse;
 public class UserService {
 
 
-    private UserDAO userDAO = new UserMemoryDataAccess();
+    private final UserDAO userDAO = new UserMemoryDataAccess();
+    private AuthDAO authDAO = new AuthMemoryDataAccess();
 
 
     public RegisterResponse register(RegisterRequest request) throws DataAccessException {
@@ -21,8 +21,13 @@ public class UserService {
         String email = request.getEmail();
         if (userDAO.getUser(username) == null){
             userDAO.createUser(username,password,email);
-            //System.out.println("Made a new user");
-           // System.out.println(username);
+            AuthData authData = authDAO.createAuth(username);
+            RegisterResponse response = new RegisterResponse();
+            response.setAuthToken(authData.authToken());
+            response.setUsername(authData.username());
+
+            return response;
+
 
         }
         else {
@@ -35,7 +40,7 @@ public class UserService {
         }
 
 
-        return null;
+
     }
   //  public LoginResult login(LoginRequest loginRequest) {}
    // public void logout(LogoutRequest logoutRequest) {}
