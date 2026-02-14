@@ -1,11 +1,15 @@
 package server;
 
+import dataaccess.MemoryDataAccess;
 import io.javalin.*;
 import io.javalin.http.*;
 
 public class Server {
 
     private final Javalin javalin;
+
+
+
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
