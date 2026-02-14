@@ -21,8 +21,15 @@ public class AuthMemoryDataAccess implements AuthDAO {
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken, username);
         auths.add(authData);
-        System.out.println(auths);
+       // System.out.println(auths);
 
         return authData;
+    }
+
+
+    public AuthData clear() throws DataAccessException {
+        System.out.println("clearing Auths");
+        auths.clear();
+        return null;
     }
 }

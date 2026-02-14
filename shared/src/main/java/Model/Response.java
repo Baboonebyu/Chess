@@ -26,11 +26,18 @@ public class Response {
         //todo i don't think this should be static
 
     }
-    public class LoginResponse extends Response {
-        String authtoken;
+    public static class LoginResponse extends Response {
+        String authToken;
         String username;
+        public void setAuthToken(String authToken){
+            this.authToken = authToken;
+        }
+        public void setUsername(String username){
+            this.username = username;
+        }
     }
 
+    public static class ClearResponse extends Response{}
 
 }
 

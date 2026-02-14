@@ -1,17 +1,24 @@
 package Service;
 
 import Model.AuthData;
+import Model.Request;
 import Model.Response;
+import Model.UserData;
 import dataaccess.*;
-import Model.Request.RegisterRequest;
-import Model.Response.RegisterResponse;
+
+import Model.Request.*;
+import Model.Response.*;
+
+import java.util.Objects;
+
+import static server.Handler.authDAO;
+import static server.Handler.userDAO;
 
 
 public class UserService {
 
 
-    private final UserDAO userDAO = new UserMemoryDataAccess();
-    private AuthDAO authDAO = new AuthMemoryDataAccess();
+
 
 
     public RegisterResponse register(RegisterRequest request) throws DataAccessException {
@@ -19,6 +26,16 @@ public class UserService {
         String username = request.getUsername();
         String password = request.getPassword();
         String email = request.getEmail();
+        if (username == null|| password == null || email == null){
+            RegisterResponse response = new RegisterResponse();
+            response.setMessage("Error Bad Request");
+
+            return response;
+
+        }
+
+
+
         if (userDAO.getUser(username) == null){
             userDAO.createUser(username,password,email);
             AuthData authData = authDAO.createAuth(username);
@@ -42,6 +59,34 @@ public class UserService {
 
 
     }
-  //  public LoginResult login(LoginRequest loginRequest) {}
+   public LoginResponse login(Request.LoginRequest loginRequest) throws DataAccessException {
+        String username = loginRequest.getUsername();
+        String password = loginRequest.getPassword();
+       if (username == null|| password == null){
+           LoginResponse response = new LoginResponse();
+           response.setMessage("Error Bad Request");
+
+           return response;
+
+       }
+       UserData user = userDAO.getUser(username);
+
+
+       if (userDAO.getUser(username) == null){
+           LoginResponse response = new LoginResponse();
+           response.setMessage("Error Unauthorised");
+           return response;
+       } else if (!Objects.equals(user.password(), password)) {
+           LoginResponse response = new LoginResponse();
+           response.setMessage("Error Unauthorised");
+           return response;
+       }
+       AuthData authData = authDAO.createAuth(username);
+       LoginResponse response = new LoginResponse();
+       response.setAuthToken(authData.authToken());
+       response.setUsername(authData.username());
+        return response;
+
+   }
    // public void logout(LogoutRequest logoutRequest) {}
 }

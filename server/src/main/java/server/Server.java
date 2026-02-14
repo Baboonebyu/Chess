@@ -37,6 +37,10 @@ public class Server {
                 new HelloBYUHandler());
         javalinServer.post("/user",
                 new RegistarHandler());
+        javalinServer.delete("/db",
+                new DeleteHandler());
+        javalinServer.post("/session",
+                new LoginHandler());
         // Other routes here
     }
 

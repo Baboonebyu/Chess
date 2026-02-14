@@ -23,9 +23,18 @@ public class Request {
 
     }
 
-    public class LoginRequest extends Request {
+    public static class LoginRequest extends Request {
         String username;
         String password;
+
+        public String getUsername(){return username;}
+        public String getPassword(){
+            return password;
+        }
+
+    }
+
+    public static class ClearRequest extends Request{
 
     }
 
