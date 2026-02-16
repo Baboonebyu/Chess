@@ -5,8 +5,7 @@ import Model.Response;
 import Model.UserData;
 import dataaccess.*;
 
-import static server.Handler.authDAO;
-import static server.Handler.userDAO;
+import static server.Handler.*;
 
 public class ClearService {
 
@@ -17,6 +16,7 @@ public class ClearService {
 
         userDAO.clear();
         authDAO.clear();
+        gameDAO.clear();
 
         return new Response.ClearResponse();
 

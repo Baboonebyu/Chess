@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.ArrayList;
+
 public class Response {
     String message;
 
@@ -23,7 +25,7 @@ public class Response {
         public void setUsername(String username){
             this.username = username;
         }
-        //todo i don't think this should be static
+
 
     }
     public static class LoginResponse extends Response {
@@ -38,7 +40,21 @@ public class Response {
     }
 
     public static class ClearResponse extends Response{}
-    public static class  LogoutResponse extends Response{ }
+    public static class  LogoutResponse extends Response{}
+    public static class ListGamesResponse extends Response{
+        ArrayList<GameData> games;
+
+        public void setGames(ArrayList<GameData> games) {
+            this.games = games;
+        }
+    }
+    public static class CreateGameResponse extends Response{
+        String gameID;
+        public void setGameID(String gameID){this.gameID = gameID;}
+    }
+
+    public static class JoinGameResponse extends Response{
+    }
 }
 
 

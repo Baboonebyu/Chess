@@ -6,6 +6,7 @@ import Model.Request.RegisterRequest;
 import Model.Response;
 import Model.Response.*;
 import Service.ClearService;
+import Service.GameService;
 import Service.UserService;
 import com.google.gson.Gson;
 import dataaccess.*;
@@ -17,8 +18,10 @@ public abstract class Handler implements io.javalin.http.Handler {
 
     public final static UserDAO userDAO = new UserMemoryDataAccess();
     public static AuthDAO authDAO = new AuthMemoryDataAccess();
+    public static GameDAO gameDAO = new GameMemoryDataAccess();
     UserService userService = new UserService();
     ClearService clearService = new ClearService();
+    GameService gameService = new GameService();
     public <T> Request fromJson(String data, Class<T> requestType){
         Gson gson = new Gson();
         return (Request) gson.fromJson(data, requestType);
@@ -100,7 +103,8 @@ class LoginHandler extends Handler{
 class LogoutHandler extends Handler{
     public void handle(Context context) throws  DataAccessException{
         String authToken = context.header("authorization");
-        System.out.println(authToken);
+        context.contentType("application/json");
+   //     System.out.println(authToken);
         LogoutRequest request = new LogoutRequest(authToken);
         LogoutResponse response =userService.logout(request);
 
@@ -113,6 +117,81 @@ class LogoutHandler extends Handler{
     }
 }
 
+class ListGameHandler extends Handler{
+    public void handle(Context context) throws  DataAccessException{
+        String authToken = context.header("authorization");
+        ListGamesResponse response = new ListGamesResponse();
+
+
+
+        if (userService.verify(authToken)){
+            ListGamesRequest request = new ListGamesRequest();
+            response = gameService.list(request);
+        }
+        else{
+            context.status(401);
+            response.setMessage("Error: unauthorized");
+        }
+
+        Object jsonResponse = toJson(response);
+        context.result(jsonResponse.toString());
+
+
+    }
+
+}
+
+class CreateGameHandler extends Handler{
+    public void handle(Context context) throws DataAccessException{
+        String authToken = context.header("authorization");
+        context.contentType("application/json");
+        CreateGameResponse response = new CreateGameResponse();
+        if (userService.verify(authToken)){
+            CreateGameRequest request = (CreateGameRequest) fromJson(context.body(), CreateGameRequest.class);
+
+            response = gameService.create(request);
+            if (Objects.equals(response.getMessage(), "Error: Bad Request")) {
+                context.status(400);
+            }
+        }
+        else{
+            context.status(401);
+            response.setMessage("Error: unauthorized");
+        }
+
+        Object jsonResponse = toJson(response);
+        context.result(jsonResponse.toString());
+
+    }
+}
+class JoinGameHandler extends Handler{
+    public void handle(Context context) throws DataAccessException {
+        String authToken = context.header("authorization");
+        context.contentType("application/json");
+
+
+        JoinGameResponse response = new JoinGameResponse();
+        if (userService.verify(authToken)){
+            JoinGameRequest request = (JoinGameRequest) fromJson(context.body(), JoinGameRequest.class);
+            String userName = authDAO.getAuth(authToken).username();
+            response = gameService.join(request,userName);
+            if (Objects.equals(response.getMessage(), "Error: Bad Request")) {
+                context.status(400);
+            } else if (Objects.equals(response.getMessage(), "Error: already taken")) {
+                context.status(403);
+            }
+        }
+        else{
+            context.status(401);
+            response.setMessage("Error: unauthorized");
+        }
+
+        Object jsonResponse = toJson(response);
+        context.result(jsonResponse.toString());
+
+
+    }
+}
 
 
 

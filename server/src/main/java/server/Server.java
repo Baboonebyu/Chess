@@ -42,6 +42,12 @@ public class Server {
                 new LoginHandler());
         javalinServer.delete("/session",
                 new LogoutHandler());
+        javalinServer.get("/game",
+                new ListGameHandler());
+        javalinServer.post("/game",
+                new CreateGameHandler());
+        javalinServer.put("/game",
+                new JoinGameHandler());
         // Other routes here
     }
 

@@ -101,4 +101,8 @@ public class UserService {
             return new LogoutResponse();
         }
     }
+    public Boolean verify(String authToken) throws DataAccessException {
+        if (authDAO.getAuth(authToken) != null){return Boolean.TRUE;}
+        else return Boolean.FALSE;
+    }
 }
