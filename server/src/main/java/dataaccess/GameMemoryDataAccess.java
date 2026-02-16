@@ -15,7 +15,7 @@ public class GameMemoryDataAccess implements GameDAO{
 
 
             for(GameData game: games){
-                if (Objects.equals(game.gameId(), id)){
+                if (Objects.equals(game.gameID(), id)){
 
                     return game;
                 }
@@ -26,6 +26,9 @@ public class GameMemoryDataAccess implements GameDAO{
 
     @Override
     public ArrayList<GameData> listGame() {
+
+
+        System.out.println(games);
         return games;
     }
 

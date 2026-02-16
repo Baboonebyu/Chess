@@ -44,6 +44,7 @@ public class Response {
     public static class ListGamesResponse extends Response{
         ArrayList<GameData> games;
 
+
         public void setGames(ArrayList<GameData> games) {
             this.games = games;
         }

@@ -5,9 +5,9 @@ import Model.Request.*;
 import Model.Request.RegisterRequest;
 import Model.Response;
 import Model.Response.*;
-import Service.ClearService;
-import Service.GameService;
-import Service.UserService;
+import service.ClearService;
+import service.GameService;
+import service.UserService;
 import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.http.Context;
@@ -134,6 +134,7 @@ class ListGameHandler extends Handler{
         }
 
         Object jsonResponse = toJson(response);
+        System.out.println(jsonResponse);
         context.result(jsonResponse.toString());
 
 
