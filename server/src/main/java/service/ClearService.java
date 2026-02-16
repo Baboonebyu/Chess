@@ -1,7 +1,7 @@
 package service;
 
-import Model.Request;
-import Model.Response;
+import model.Request;
+import model.Response;
 import dataaccess.*;
 
 import static server.Handler.*;
@@ -10,7 +10,7 @@ public class ClearService {
 
 
 
-    public Response.ClearResponse Clear(Request.ClearRequest request) throws DataAccessException {
+    public Response.ClearResponse clear(Request.ClearRequest request) throws DataAccessException {
 
 
         userDAO.clear();

@@ -1,12 +1,12 @@
 package service;
 
-import Model.AuthData;
-import Model.Request;
-import Model.UserData;
+import model.AuthData;
+import model.Request;
+import model.UserData;
 import dataaccess.*;
 
-import Model.Request.*;
-import Model.Response.*;
+import model.Request.*;
+import model.Response.*;
 
 import java.util.Objects;
 
@@ -102,6 +102,6 @@ public class UserService {
     }
     public Boolean verify(String authToken) throws DataAccessException {
         if (authDAO.getAuth(authToken) != null){return Boolean.TRUE;}
-        else return Boolean.FALSE;
+        else {return Boolean.FALSE;}
     }
 }

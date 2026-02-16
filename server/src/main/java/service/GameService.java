@@ -1,8 +1,8 @@
 package service;
 
-import Model.GameData;
-import Model.Request.*;
-import Model.Response.*;
+import model.GameData;
+import model.Request.*;
+import model.Response.*;
 
 import dataaccess.DataAccessException;
 

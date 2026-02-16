@@ -1,10 +1,10 @@
 package server;
 
-import Model.Request;
-import Model.Request.*;
-import Model.Request.RegisterRequest;
-import Model.Response;
-import Model.Response.*;
+import model.Request;
+import model.Request.*;
+import model.Request.RegisterRequest;
+import model.Response;
+import model.Response.*;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public abstract class Handler implements io.javalin.http.Handler {
 
-    public final static UserDAO userDAO = new UserMemoryDataAccess();
+    public static UserDAO userDAO = new UserMemoryDataAccess();
     public static AuthDAO authDAO = new AuthMemoryDataAccess();
     public static GameDAO gameDAO = new GameMemoryDataAccess();
     UserService userService = new UserService();
@@ -73,7 +73,7 @@ class DeleteHandler extends Handler{
     public void handle(Context context) throws DataAccessException {
 
         ClearRequest request = new ClearRequest();
-        Response response = clearService.Clear(request);
+        Response response = clearService.clear(request);
 
         Object jsonResponse = toJson(response);
         context.result(jsonResponse.toString());

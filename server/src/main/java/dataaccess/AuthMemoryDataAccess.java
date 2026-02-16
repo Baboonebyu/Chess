@@ -1,9 +1,6 @@
 package dataaccess;
 
-import Model.AuthData;
-import Model.UserData;
-import dataaccess.DataAccessException;
-import dataaccess.UserDAO;
+import model.AuthData;
 
 import java.util.ArrayList;
 import java.util.Objects;

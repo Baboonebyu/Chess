@@ -1,6 +1,6 @@
 package dataaccess;
 
-import Model.*;
+import model.*;
 
 public interface UserDAO {
     UserData getUser(String username) throws DataAccessException;
