@@ -1,8 +1,7 @@
-package Service;
+package service;
 
 import Model.Request;
 import Model.Response;
-import Model.UserData;
 import dataaccess.*;
 
 import static server.Handler.*;

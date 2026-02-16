@@ -1,4 +1,4 @@
-package Service;
+package service;
 
 import Model.GameData;
 import Model.Request.*;
