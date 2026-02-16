@@ -88,17 +88,8 @@ public class UserService {
 
    }
     public LogoutResponse logout(LogoutRequest logoutRequest) throws DataAccessException{
-        String authToken = logoutRequest.getAuthToken();
-        if(authDAO.getAuth(authToken) == null){
-            LogoutResponse response = new LogoutResponse();
-            response.setMessage("Error: unauthorized");
-            return response;
-
-        }
-        else {
-            authDAO.delete(authToken);
-            return new LogoutResponse();
-        }
+        authDAO.delete(logoutRequest.getAuthToken());
+        return new LogoutResponse();
     }
     public Boolean verify(String authToken) throws DataAccessException {
         if (authDAO.getAuth(authToken) != null){return Boolean.TRUE;}

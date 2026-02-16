@@ -46,21 +46,15 @@ public class Request {
     }
 
 
-    public static class AuthTokenRequest extends Request{
+    public static class LogoutRequest extends Request{
         String authToken;
 
-        public AuthTokenRequest(String authToken) {
+        public LogoutRequest(String authToken) {
             this.authToken = authToken;
         }
-        public String getAuthToken(){return authToken;}
 
-
-    }
-
-    public static class LogoutRequest extends AuthTokenRequest{
-
-        public LogoutRequest(String authToken) {
-            super(authToken);
+        public String getAuthToken() {
+            return authToken;
         }
     }
     public static class ListGamesRequest extends Request{

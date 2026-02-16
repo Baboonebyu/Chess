@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class GameMemoryDataAccess implements GameDAO{
     ArrayList<GameData> games = new ArrayList<>();
-    int NextGameId = 0;
+    int nextGameId = 0;
 
     @Override
     public GameData getGame(String id) {
@@ -33,12 +33,12 @@ public class GameMemoryDataAccess implements GameDAO{
 
     @Override
     public String createGame(String gameName) {
-        NextGameId +=1;
-        GameData game = new GameData(String.valueOf(NextGameId),null,null,gameName);
+        nextGameId +=1;
+        GameData game = new GameData(String.valueOf(nextGameId),null,null,gameName);
         games.add(game);
 
 
-        return String.valueOf(NextGameId);
+        return String.valueOf(nextGameId);
     }
     public void updateGame(String gameID, String whiteUsername, String blackUsername, String gameName){
         games.remove(getGame(gameID));

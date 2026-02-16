@@ -103,14 +103,18 @@ class LoginHandler extends Handler{
 class LogoutHandler extends Handler{
     public void handle(Context context) throws  DataAccessException{
         String authToken = context.header("authorization");
-        context.contentType("application/json");
-   //     System.out.println(authToken);
-        LogoutRequest request = new LogoutRequest(authToken);
-        LogoutResponse response =userService.logout(request);
+        LogoutResponse response = new LogoutResponse();
 
-        if(Objects.equals(response.getMessage(), "Error: unauthorized")){
-            context.status(401);
+
+        if (userService.verify(authToken)){
+            LogoutRequest request = new LogoutRequest(authToken);
+            response = userService.logout(request);
         }
+        else{
+            context.status(401);
+            response.setMessage("Error: unauthorized");
+        }
+
         Object jsonResponse = toJson(response);
         context.result(jsonResponse.toString());
 
