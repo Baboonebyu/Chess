@@ -46,6 +46,14 @@ public class GameService {
         String playerColor = request.getPlayerColor();
         GameData game = gameDAO.getGame(gameID);
         JoinGameResponse response = new JoinGameResponse();
+        if (game == null){
+            response.setMessage("Error: Bad Request");
+            return response;
+        }
+        if(!Objects.equals(playerColor, "WHITE") && !Objects.equals(playerColor, "BLACK")){
+            response.setMessage("Error: Bad Request");
+            return response;
+        }
 
         if (Objects.equals(playerColor, "WHITE") && game.whiteUsername()==null){
            gameDAO.updateGame(gameID,userName,game.blackUsername(),game.gameName());
