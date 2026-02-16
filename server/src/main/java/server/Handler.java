@@ -150,7 +150,7 @@ class CreateGameHandler extends Handler{
             CreateGameRequest request = (CreateGameRequest) fromJson(context.body(), CreateGameRequest.class);
 
             response = gameService.create(request);
-            if (Objects.equals(response.getMessage(), "Error: Bad Request")) {
+            if (response.getMessage()!= null&&Objects.equals(response.getMessage(), "Error: Bad Request")) {
                 context.status(400);
             }
         }
@@ -175,9 +175,9 @@ class JoinGameHandler extends Handler{
             JoinGameRequest request = (JoinGameRequest) fromJson(context.body(), JoinGameRequest.class);
             String userName = authDAO.getAuth(authToken).username();
             response = gameService.join(request,userName);
-            if (Objects.equals(response.getMessage(), "Error: Bad Request")) {
+            if (response != null && Objects.equals(response.getMessage(), "Error: Bad Request")) {
                 context.status(400);
-            } else if (Objects.equals(response.getMessage(), "Error: already taken")) {
+            } else if (response != null && Objects.equals(response.getMessage(), "Error: already taken")) {
                 context.status(403);
             }
         }
