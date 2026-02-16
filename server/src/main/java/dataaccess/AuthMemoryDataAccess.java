@@ -14,6 +14,12 @@ public class AuthMemoryDataAccess implements AuthDAO {
 
     public AuthData getAuth(String authToken) throws DataAccessException {
 
+        for(AuthData auth: auths){
+            if (Objects.equals(auth.authToken(), authToken)){
+
+                return auth;
+            }
+        }
         return null;
     }
 
@@ -28,8 +34,13 @@ public class AuthMemoryDataAccess implements AuthDAO {
 
 
     public AuthData clear() throws DataAccessException {
-        System.out.println("clearing Auths");
+     //   System.out.println("clearing Auths");
         auths.clear();
         return null;
+    }
+
+
+    public void delete(String authToken) {
+        auths.removeIf(auth -> Objects.equals(auth.authToken(), authToken));
     }
 }

@@ -38,7 +38,7 @@ public class Response {
     }
 
     public static class ClearResponse extends Response{}
-
+    public static class  LogoutResponse extends Response{ }
 }
 
 

@@ -15,7 +15,6 @@ public class Server {
         // Register your endpoints and exception handlers here.
 
 
-        System.out.println("reg");
         createHandlers(javalin);
 
 
@@ -41,6 +40,8 @@ public class Server {
                 new DeleteHandler());
         javalinServer.post("/session",
                 new LoginHandler());
+        javalinServer.delete("/session",
+                new LogoutHandler());
         // Other routes here
     }
 

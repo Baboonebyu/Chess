@@ -59,7 +59,7 @@ public class UserService {
 
 
     }
-   public LoginResponse login(Request.LoginRequest loginRequest) throws DataAccessException {
+    public LoginResponse login(Request.LoginRequest loginRequest) throws DataAccessException {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
        if (username == null|| password == null){
@@ -88,5 +88,17 @@ public class UserService {
         return response;
 
    }
-   // public void logout(LogoutRequest logoutRequest) {}
+    public LogoutResponse logout(LogoutRequest logoutRequest) throws DataAccessException{
+        String authToken = logoutRequest.getAuthToken();
+        if(authDAO.getAuth(authToken) == null){
+            LogoutResponse response = new LogoutResponse();
+            response.setMessage("Error: unauthorized");
+            return response;
+
+        }
+        else {
+            authDAO.delete(authToken);
+            return new LogoutResponse();
+        }
+    }
 }

@@ -35,7 +35,14 @@ public class Request {
     }
 
     public static class ClearRequest extends Request{
+    }
+    public static class LogoutRequest extends Request{
+        String authToken;
 
+        public LogoutRequest(String authToken) {
+            this.authToken = authToken;
+        }
+        public String getAuthToken(){return authToken;}
     }
 
 }
