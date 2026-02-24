@@ -8,8 +8,14 @@ public interface GameDAO {
 
 
     GameData getGame(String id);
+
     ArrayList<GameData> listGame();
+
     String createGame(String gameName);
+
     void updateGame(String gameID, String whiteUsername, String blackUsername, String gameName);
+
     void clear();
+
+    ArrayList<GameData> getGames();
 }

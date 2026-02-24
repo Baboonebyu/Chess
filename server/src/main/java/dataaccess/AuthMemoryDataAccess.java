@@ -9,10 +9,14 @@ import java.util.UUID;
 public class AuthMemoryDataAccess implements AuthDAO {
     ArrayList<AuthData> auths = new ArrayList<>();
 
+    public ArrayList<AuthData> getAuths() {
+        return auths;
+    }
+
     public AuthData getAuth(String authToken) throws DataAccessException {
 
-        for(AuthData auth: auths){
-            if (Objects.equals(auth.authToken(), authToken)){
+        for (AuthData auth : auths) {
+            if (Objects.equals(auth.authToken(), authToken)) {
 
                 return auth;
             }
@@ -24,14 +28,14 @@ public class AuthMemoryDataAccess implements AuthDAO {
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken, username);
         auths.add(authData);
-       // System.out.println(auths);
+        // System.out.println(auths);
 
         return authData;
     }
 
 
     public AuthData clear() throws DataAccessException {
-     //   System.out.println("clearing Auths");
+        //   System.out.println("clearing Auths");
         auths.clear();
         return null;
     }

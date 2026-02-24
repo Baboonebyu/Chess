@@ -22,11 +22,13 @@ public abstract class Handler implements io.javalin.http.Handler {
     UserService userService = new UserService();
     ClearService clearService = new ClearService();
     GameService gameService = new GameService();
-    public <T> Request fromJson(String data, Class<T> requestType){
+
+    public <T> Request fromJson(String data, Class<T> requestType) {
         Gson gson = new Gson();
         return (Request) gson.fromJson(data, requestType);
     }
-    public Object toJson(Response response){
+
+    public Object toJson(Response response) {
         Gson gson = new Gson();
         return gson.toJson(response);
     }
@@ -40,36 +42,32 @@ class HelloBYUHandler extends Handler {
     }
 }
 
-    class RegistarHandler extends Handler {
-        public void handle(Context context) throws DataAccessException {
-            context.contentType("application/json");
+class RegistarHandler extends Handler {
+    public void handle(Context context) throws DataAccessException {
+        context.contentType("application/json");
 
-            RegisterRequest request = (RegisterRequest) fromJson(context.body(), RegisterRequest.class);
-           // System.out.println(request);
-
-
+        RegisterRequest request = (RegisterRequest) fromJson(context.body(), RegisterRequest.class);
+        // System.out.println(request);
 
 
-            Response response = userService.register(request);
-            if (response!= null && Objects.equals(response.getMessage(), "Error Username Already taken")){
-                context.status(403);
-                //todo
-                //make this better
-            } else if (response!= null && Objects.equals(response.getMessage(), "Error Bad Request")) {
-                context.status(400);
-            }
-
-
-            Object jsonResponse = toJson(response);
-            context.result(jsonResponse.toString());
-
-
-
-
+        Response response = userService.register(request);
+        if (response != null && Objects.equals(response.getMessage(), "Error Username Already taken")) {
+            context.status(403);
+            //todo
+            //make this better
+        } else if (response != null && Objects.equals(response.getMessage(), "Error Bad Request")) {
+            context.status(400);
         }
+
+
+        Object jsonResponse = toJson(response);
+        context.result(jsonResponse.toString());
+
+
+    }
 }
 
-class DeleteHandler extends Handler{
+class DeleteHandler extends Handler {
     public void handle(Context context) throws DataAccessException {
 
         ClearRequest request = new ClearRequest();
@@ -80,18 +78,18 @@ class DeleteHandler extends Handler{
     }
 }
 
-class LoginHandler extends Handler{
-    public void handle(Context context) throws DataAccessException{
+class LoginHandler extends Handler {
+    public void handle(Context context) throws DataAccessException {
         context.contentType("application/json");
 
-       LoginRequest request = (LoginRequest) fromJson(context.body(), LoginRequest.class);
+        LoginRequest request = (LoginRequest) fromJson(context.body(), LoginRequest.class);
         LoginResponse response = userService.login(request);
 
-        if (response!= null && Objects.equals(response.getMessage(), "Error Unauthorised")){
+        if (response != null && Objects.equals(response.getMessage(), "Error Unauthorised")) {
             context.status(401);
             //todo
             //make this better
-        } else if (response!= null && Objects.equals(response.getMessage(), "Error Bad Request")) {
+        } else if (response != null && Objects.equals(response.getMessage(), "Error Bad Request")) {
             context.status(400);
         }
 
@@ -100,17 +98,16 @@ class LoginHandler extends Handler{
     }
 }
 
-class LogoutHandler extends Handler{
-    public void handle(Context context) throws  DataAccessException{
+class LogoutHandler extends Handler {
+    public void handle(Context context) throws DataAccessException {
         String authToken = context.header("authorization");
         LogoutResponse response = new LogoutResponse();
 
 
-        if (userService.verify(authToken)){
+        if (userService.verify(authToken)) {
             LogoutRequest request = new LogoutRequest(authToken);
             response = userService.logout(request);
-        }
-        else{
+        } else {
             context.status(401);
             response.setMessage("Error: unauthorized");
         }
@@ -121,18 +118,16 @@ class LogoutHandler extends Handler{
     }
 }
 
-class ListGameHandler extends Handler{
-    public void handle(Context context) throws  DataAccessException{
+class ListGameHandler extends Handler {
+    public void handle(Context context) throws DataAccessException {
         String authToken = context.header("authorization");
         ListGamesResponse response = new ListGamesResponse();
 
 
-
-        if (userService.verify(authToken)){
+        if (userService.verify(authToken)) {
             ListGamesRequest request = new ListGamesRequest();
             response = gameService.list(request);
-        }
-        else{
+        } else {
             context.status(401);
             response.setMessage("Error: unauthorized");
         }
@@ -146,20 +141,19 @@ class ListGameHandler extends Handler{
 
 }
 
-class CreateGameHandler extends Handler{
-    public void handle(Context context) throws DataAccessException{
+class CreateGameHandler extends Handler {
+    public void handle(Context context) throws DataAccessException {
         String authToken = context.header("authorization");
         context.contentType("application/json");
         CreateGameResponse response = new CreateGameResponse();
-        if (userService.verify(authToken)){
+        if (userService.verify(authToken)) {
             CreateGameRequest request = (CreateGameRequest) fromJson(context.body(), CreateGameRequest.class);
 
             response = gameService.create(request);
-            if (response.getMessage()!= null&&Objects.equals(response.getMessage(), "Error: Bad Request")) {
+            if (response.getMessage() != null && Objects.equals(response.getMessage(), "Error: Bad Request")) {
                 context.status(400);
             }
-        }
-        else{
+        } else {
             context.status(401);
             response.setMessage("Error: unauthorized");
         }
@@ -169,24 +163,24 @@ class CreateGameHandler extends Handler{
 
     }
 }
-class JoinGameHandler extends Handler{
+
+class JoinGameHandler extends Handler {
     public void handle(Context context) throws DataAccessException {
         String authToken = context.header("authorization");
         context.contentType("application/json");
 
 
         JoinGameResponse response = new JoinGameResponse();
-        if (userService.verify(authToken)){
+        if (userService.verify(authToken)) {
             JoinGameRequest request = (JoinGameRequest) fromJson(context.body(), JoinGameRequest.class);
             String userName = authDAO.getAuth(authToken).username();
-            response = gameService.join(request,userName);
+            response = gameService.join(request, userName);
             if (response != null && Objects.equals(response.getMessage(), "Error: Bad Request")) {
                 context.status(400);
             } else if (response != null && Objects.equals(response.getMessage(), "Error: already taken")) {
                 context.status(403);
             }
-        }
-        else{
+        } else {
             context.status(401);
             response.setMessage("Error: unauthorized");
         }
