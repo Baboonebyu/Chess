@@ -56,18 +56,7 @@ class UserServiceTest {
 
     @Test
     void logoutTest() throws DataAccessException {
-        String tUsername = "testUser";
-        String tPassword = "testPassword";
-        String tEmail = "testEmail";
-        Request.RegisterRequest registerRequest = new Request.RegisterRequest();
-        registerRequest.setUsername(tUsername);
-        registerRequest.setPassword(tPassword);
-        registerRequest.setEmail(tEmail);
-
-        //create a user, auto logged in, Test that it worked
-        Response.RegisterResponse response = service.register(registerRequest);
-        String token = response.getAuthToken();
-        assertNotNull(authDAO.getAuth(token));
+        String token = createUserForTest();
 
         Request.LogoutRequest logoutRequest = new Request.LogoutRequest(token);
         service.logout(logoutRequest);
@@ -76,18 +65,7 @@ class UserServiceTest {
 
     @Test
     void loginTest() throws DataAccessException {
-        String tUsername = "testUser";
-        String tPassword = "testPassword";
-        String tEmail = "testEmail";
-        Request.RegisterRequest registerRequest = new Request.RegisterRequest();
-        registerRequest.setUsername(tUsername);
-        registerRequest.setPassword(tPassword);
-        registerRequest.setEmail(tEmail);
-
-        //create a user, auto logged in, Test that it worked
-        Response.RegisterResponse response = service.register(registerRequest);
-        String token = response.getAuthToken();
-        assertNotNull(authDAO.getAuth(token));
+        String token = createUserForTest();
 
         //logs out the user so we can log in
         Request.LogoutRequest logoutRequest = new Request.LogoutRequest(token);
@@ -103,24 +81,21 @@ class UserServiceTest {
 
     @Test
     void verifyTest() throws DataAccessException {
-        String tUsername = "testUser";
-        String tPassword = "testPassword";
-        String tEmail = "testEmail";
-        Request.RegisterRequest registerRequest = new Request.RegisterRequest();
-        registerRequest.setUsername(tUsername);
-        registerRequest.setPassword(tPassword);
-        registerRequest.setEmail(tEmail);
-
-        //create a user, auto logged in, Test that it worked
-        Response.RegisterResponse response = service.register(registerRequest);
-        String token = response.getAuthToken();
-        assertNotNull(authDAO.getAuth(token));
+        String token = createUserForTest();
 
         assertEquals(true, service.verify(token));
     }
 
     @Test
     void verifyBadTokenTest() throws DataAccessException {
+        createUserForTest();
+
+
+        String badToken = "BadToken";
+        assertEquals(false, service.verify(badToken));
+    }
+
+    String createUserForTest() throws DataAccessException {
         String tUsername = "testUser";
         String tPassword = "testPassword";
         String tEmail = "testEmail";
@@ -133,8 +108,6 @@ class UserServiceTest {
         Response.RegisterResponse response = service.register(registerRequest);
         String token = response.getAuthToken();
         assertNotNull(authDAO.getAuth(token));
-
-        String badToken = "BadToken";
-        assertEquals(false, service.verify(badToken));
+        return token;
     }
 }
