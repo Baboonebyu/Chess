@@ -5,9 +5,7 @@ import model.Request.*;
 import model.Request.RegisterRequest;
 import model.Response;
 import model.Response.*;
-import service.ClearService;
-import service.GameService;
-import service.UserService;
+import service.*;
 import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.http.Context;
@@ -49,16 +47,17 @@ class RegistarHandler extends Handler {
         RegisterRequest request = (RegisterRequest) fromJson(context.body(), RegisterRequest.class);
         // System.out.println(request);
 
-
-        Response response = userService.register(request);
-        if (response != null && Objects.equals(response.getMessage(), "Error Username Already taken")) {
-            context.status(403);
-            //todo
-            //make this better
-        } else if (response != null && Objects.equals(response.getMessage(), "Error Bad Request")) {
+        RegisterResponse response = new RegisterResponse();
+        try{response = userService.register(request);
+        }
+        catch (BadRequestException r){
+            response.setMessage("Error: bad request");
             context.status(400);
         }
-
+        catch (NameTakenException r){
+            response.setMessage("Error: already taken");
+            context.status(403);
+        }
 
         Object jsonResponse = toJson(response);
         context.result(jsonResponse.toString());
@@ -83,16 +82,19 @@ class LoginHandler extends Handler {
         context.contentType("application/json");
 
         LoginRequest request = (LoginRequest) fromJson(context.body(), LoginRequest.class);
-        LoginResponse response = userService.login(request);
+        LoginResponse response = new LoginResponse();
 
-        if (response != null && Objects.equals(response.getMessage(), "Error Unauthorised")) {
+
+
+        try{response = userService.login(request);}
+        catch (UnauthorisedException r){
+            response.setMessage("Error: Unauthorised");
             context.status(401);
-            //todo
-            //make this better
-        } else if (response != null && Objects.equals(response.getMessage(), "Error Bad Request")) {
+        }
+        catch (BadRequestException r){
+            response.setMessage("Error: bad request");
             context.status(400);
         }
-
         Object jsonResponse = toJson(response);
         context.result(jsonResponse.toString());
     }

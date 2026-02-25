@@ -27,10 +27,7 @@ public class UserService {
         String email = request.getEmail();
         if (username == null|| password == null || email == null){
             RegisterResponse response = new RegisterResponse();
-            response.setMessage("Error Bad Request");
-
-            return response;
-
+            throw new BadRequestException("Error Bad Request");
         }
 
 
@@ -49,10 +46,7 @@ public class UserService {
         else {
 
             RegisterResponse response = new RegisterResponse();
-            response.setMessage("Error Username Already taken");
-
-            return response;
-
+            throw new NameTakenException("Error: already taken");
         }
 
 
@@ -62,23 +56,16 @@ public class UserService {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
        if (username == null|| password == null){
-           LoginResponse response = new LoginResponse();
-           response.setMessage("Error Bad Request");
-
-           return response;
+           throw new BadRequestException("Error Bad Request");
 
        }
        UserData user = userDAO.getUser(username);
 
 
        if (userDAO.getUser(username) == null){
-           LoginResponse response = new LoginResponse();
-           response.setMessage("Error Unauthorised");
-           return response;
+           throw new UnauthorisedException("Error Unauthorised");
        } else if (!Objects.equals(user.password(), password)) {
-           LoginResponse response = new LoginResponse();
-           response.setMessage("Error Unauthorised");
-           return response;
+           throw new UnauthorisedException("Error Unauthorised");
        }
        AuthData authData = authDAO.createAuth(username);
        LoginResponse response = new LoginResponse();
