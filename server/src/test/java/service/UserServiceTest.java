@@ -18,6 +18,9 @@ import static server.Handler.*;
 class UserServiceTest {
 
     final static UserService service = new UserService();
+    String tUsername = "testUser";
+    String tPassword = "testPassword";
+    String tEmail = "testEmail";
 
     @BeforeEach
     void setUp() {
@@ -73,7 +76,11 @@ class UserServiceTest {
         assertNull(authDAO.getAuth(token));
 
         Request.LoginRequest loginRequest = new Request.LoginRequest();
-
+        loginRequest.setUsername(tUsername);
+        loginRequest.setPassword(tPassword);
+        Response.LoginResponse response = service.login(loginRequest);
+        String rToken = response.getAuthToken();
+        assertNotNull( authDAO.getAuth(rToken));
 
 
     }
@@ -96,9 +103,7 @@ class UserServiceTest {
     }
 
     String createUserForTest() throws DataAccessException {
-        String tUsername = "testUser";
-        String tPassword = "testPassword";
-        String tEmail = "testEmail";
+
         Request.RegisterRequest registerRequest = new Request.RegisterRequest();
         registerRequest.setUsername(tUsername);
         registerRequest.setPassword(tPassword);
