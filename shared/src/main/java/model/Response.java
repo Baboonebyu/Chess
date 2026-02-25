@@ -26,7 +26,9 @@ public class Response {
             this.username = username;
         }
 
-
+        public String getAuthToken() {
+            return authToken;
+        }
     }
     public static class LoginResponse extends Response {
         String authToken;

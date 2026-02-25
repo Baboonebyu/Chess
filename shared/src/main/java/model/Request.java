@@ -4,10 +4,12 @@ public class Request {
     String message;
 
 
-    public class RegisterRequest extends Request {
+    public static class RegisterRequest extends Request {
         String username;
         String password;
         String email;
+
+
 
 
         public String getUsername(){
@@ -20,7 +22,17 @@ public class Request {
             return email;
         }
 
+        public void setUsername(String username) {
+            this.username = username;
+        }
 
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
     }
 
     public static class LoginRequest extends Request {

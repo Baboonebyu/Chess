@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.*;
+import model.Request;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,13 +9,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static server.Handler.*;
 
 class ClearServiceTest {
+    static final ClearService service = new ClearService();
 
 
     @BeforeEach
     void setUp() throws DataAccessException {
-        UserDAO userDAO = new UserMemoryDataAccess();
-        AuthDAO authDAO = new AuthMemoryDataAccess();
-        GameDAO gameDAO = new GameMemoryDataAccess();
+        userDAO = new UserMemoryDataAccess();
+        authDAO = new AuthMemoryDataAccess();
+        gameDAO = new GameMemoryDataAccess();
 
         userDAO.createUser("testUser","testPassword","testEmail");
         authDAO.createAuth("testUsername");
@@ -28,9 +30,7 @@ class ClearServiceTest {
     }
     @Test
     void clearTest() throws DataAccessException {
-        userDAO.clear();
-        authDAO.clear();
-        gameDAO.clear();
+        service.clear(new Request.ClearRequest());
 
         assertTrue(userDAO.getUsers().isEmpty());
         assertTrue(authDAO.getAuths().isEmpty());
