@@ -23,9 +23,7 @@ public class GameService {
         CreateGameResponse response = new CreateGameResponse();
 
         if(request.getGameName() == null){
-
-            response.setMessage("Error: Bad Request");
-            return response;
+            throw new BadRequestException("Error: Bad Request");
         }
         else{
             String gameID = gameDAO.createGame(gameName);

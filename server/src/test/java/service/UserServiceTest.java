@@ -69,7 +69,7 @@ class UserServiceTest {
         service.logout(logoutRequest);
         assertNull(authDAO.getAuth(token));
     }
-    /*
+
     @Test
     void logoutBadTest() throws DataAccessException {
         createUserForTest();
@@ -77,7 +77,7 @@ class UserServiceTest {
         Request.LogoutRequest logoutRequest = new Request.LogoutRequest(badToken);
         assertThrows(UnauthorisedException.class,()->service.logout(logoutRequest) );
     }
-*/
+
 
 
     @Test
@@ -127,7 +127,7 @@ class UserServiceTest {
 
 
         String badToken = "BadToken";
-        assertEquals(false, service.verify(badToken));
+        assertThrows(UnauthorisedException.class, ()-> service.verify(badToken));
     }
 
     String createUserForTest() throws DataAccessException {

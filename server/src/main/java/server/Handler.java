@@ -106,14 +106,19 @@ class LogoutHandler extends Handler {
         String authToken = context.header("authorization");
         LogoutResponse response = new LogoutResponse();
 
-
-        if (userService.verify(authToken)) {
-            LogoutRequest request = new LogoutRequest(authToken);
-            response = userService.logout(request);
-        } else {
-            context.status(401);
-            response.setMessage("Error: unauthorized");
+        boolean Success = false;
+        try{
+            userService.verify(authToken);
+            Success = true;
         }
+        catch (UnauthorisedException r){
+            context.status(401);
+            response.setMessage(r.getMessage());
+
+        }
+        if(Success){ LogoutRequest request = new LogoutRequest(authToken);
+            response = userService.logout(request);}
+
 
         Object jsonResponse = toJson(response);
         context.result(jsonResponse.toString());
@@ -127,17 +132,24 @@ class ListGameHandler extends Handler {
         ListGamesResponse response = new ListGamesResponse();
 
 
-        if (userService.verify(authToken)) {
-            ListGamesRequest request = new ListGamesRequest();
-            response = gameService.list(request);
-        } else {
-            context.status(401);
-            response.setMessage("Error: unauthorized");
+        boolean Success = false;
+        try{
+            userService.verify(authToken);
+            Success = true;
         }
+        catch (UnauthorisedException r){
+            context.status(401);
+            response.setMessage(r.getMessage());
 
-        Object jsonResponse = toJson(response);
-        System.out.println(jsonResponse);
-        context.result(jsonResponse.toString());
+        }
+        if(Success){ ListGamesRequest request = new ListGamesRequest();
+            response = gameService.list(request);}
+
+
+
+            Object jsonResponse = toJson(response);
+            System.out.println(jsonResponse);
+            context.result(jsonResponse.toString());
 
 
     }
@@ -149,16 +161,24 @@ class CreateGameHandler extends Handler {
         String authToken = context.header("authorization");
         context.contentType("application/json");
         CreateGameResponse response = new CreateGameResponse();
-        if (userService.verify(authToken)) {
+        boolean Success = false;
+        try{
+            userService.verify(authToken);
+            Success = true;
+        }
+        catch (UnauthorisedException r){
+            context.status(401);
+            response.setMessage(r.getMessage());
+
+        }
+        if(Success){
             CreateGameRequest request = (CreateGameRequest) fromJson(context.body(), CreateGameRequest.class);
 
-            response = gameService.create(request);
-            if (response.getMessage() != null && Objects.equals(response.getMessage(), "Error: Bad Request")) {
+            try{response = gameService.create(request);}
+            catch (BadRequestException r){
                 context.status(400);
+                response.setMessage(r.getMessage());
             }
-        } else {
-            context.status(401);
-            response.setMessage("Error: unauthorized");
         }
 
         Object jsonResponse = toJson(response);
@@ -174,7 +194,18 @@ class JoinGameHandler extends Handler {
 
 
         JoinGameResponse response = new JoinGameResponse();
-        if (userService.verify(authToken)) {
+
+        boolean Success = false;
+        try{
+            userService.verify(authToken);
+            Success = true;
+        }
+        catch (UnauthorisedException r){
+            context.status(401);
+            response.setMessage(r.getMessage());
+
+        }
+        if (Success){
             JoinGameRequest request = (JoinGameRequest) fromJson(context.body(), JoinGameRequest.class);
             String userName = authDAO.getAuth(authToken).username();
             response = gameService.join(request, userName);
@@ -183,9 +214,6 @@ class JoinGameHandler extends Handler {
             } else if (response != null && Objects.equals(response.getMessage(), "Error: already taken")) {
                 context.status(403);
             }
-        } else {
-            context.status(401);
-            response.setMessage("Error: unauthorized");
         }
 
         Object jsonResponse = toJson(response);
