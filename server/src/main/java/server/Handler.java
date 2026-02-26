@@ -10,8 +10,6 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.http.Context;
 
-import java.util.Objects;
-
 public abstract class Handler implements io.javalin.http.Handler {
 
     public static UserDAO userDAO = new UserMemoryDataAccess();
@@ -54,7 +52,7 @@ class RegistarHandler extends Handler {
             response.setMessage(r.getMessage());
             context.status(400);
         }
-        catch (NameTakenException r){
+        catch (AlreadyTakenException r){
             response.setMessage(r.getMessage());
             context.status(403);
         }
@@ -208,11 +206,17 @@ class JoinGameHandler extends Handler {
         if (Success){
             JoinGameRequest request = (JoinGameRequest) fromJson(context.body(), JoinGameRequest.class);
             String userName = authDAO.getAuth(authToken).username();
-            response = gameService.join(request, userName);
-            if (response != null && Objects.equals(response.getMessage(), "Error: Bad Request")) {
+
+            try{
+            response = gameService.join(request, userName);}
+            catch (BadRequestException r){
                 context.status(400);
-            } else if (response != null && Objects.equals(response.getMessage(), "Error: already taken")) {
+                response.setMessage(r.getMessage());
+            }
+            catch (AlreadyTakenException r){
                 context.status(403);
+                response.setMessage(r.getMessage());
+
             }
         }
 

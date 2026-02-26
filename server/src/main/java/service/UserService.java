@@ -46,7 +46,7 @@ public class UserService {
         else {
 
             RegisterResponse response = new RegisterResponse();
-            throw new NameTakenException("Error: already taken");
+            throw new AlreadyTakenException("Error: already taken");
         }
 
 

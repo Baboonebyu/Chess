@@ -59,6 +59,10 @@ public class Request {
     public static class CreateGameRequest extends Request{
         String gameName;
 
+        public void setGameName(String gameName) {
+            this.gameName = gameName;
+        }
+
         public String getGameName(){
             return gameName;
         }
@@ -81,6 +85,15 @@ public class Request {
 
     public static class JoinGameRequest extends Request {
         String playerColor;
+
+        public void setPlayerColor(String playerColor) {
+            this.playerColor = playerColor;
+        }
+
+        public void setGameID(String gameID) {
+            this.gameID = gameID;
+        }
+
         String gameID;
 
         public String getGameID() {

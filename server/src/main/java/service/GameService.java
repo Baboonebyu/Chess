@@ -45,12 +45,10 @@ public class GameService {
         GameData game = gameDAO.getGame(gameID);
         JoinGameResponse response = new JoinGameResponse();
         if (game == null){
-            response.setMessage("Error: Bad Request");
-            return response;
+            throw new BadRequestException("Error: Bad Request");
         }
         if(!Objects.equals(playerColor, "WHITE") && !Objects.equals(playerColor, "BLACK")){
-            response.setMessage("Error: Bad Request");
-            return response;
+            throw new BadRequestException("Error: Bad Request");
         }
 
         if (Objects.equals(playerColor, "WHITE") && game.whiteUsername()==null){
@@ -59,8 +57,7 @@ public class GameService {
             gameDAO.updateGame(gameID,game.whiteUsername(),userName,game.gameName());
         }
         else{
-            response.setMessage("Error: already taken");
-            return response;
+            throw new AlreadyTakenException("Error: already taken");
         }
         return null;
     }

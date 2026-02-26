@@ -50,6 +50,9 @@ public class Response {
     public static class ListGamesResponse extends Response{
         ArrayList<GameData> games;
 
+        public ArrayList<GameData> getGames() {
+            return games;
+        }
 
         public void setGames(ArrayList<GameData> games) {
             this.games = games;
@@ -57,6 +60,11 @@ public class Response {
     }
     public static class CreateGameResponse extends Response{
         String gameID;
+
+        public String getGameID() {
+            return gameID;
+        }
+
         public void setGameID(String gameID){this.gameID = gameID;}
     }
 
