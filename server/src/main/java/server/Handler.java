@@ -51,11 +51,11 @@ class RegistarHandler extends Handler {
         try{response = userService.register(request);
         }
         catch (BadRequestException r){
-            response.setMessage("Error: bad request");
+            response.setMessage(r.getMessage());
             context.status(400);
         }
         catch (NameTakenException r){
-            response.setMessage("Error: already taken");
+            response.setMessage(r.getMessage());
             context.status(403);
         }
 
@@ -88,11 +88,12 @@ class LoginHandler extends Handler {
 
         try{response = userService.login(request);}
         catch (UnauthorisedException r){
-            response.setMessage("Error: Unauthorised");
+            response.setMessage(r.getMessage());
             context.status(401);
         }
         catch (BadRequestException r){
-            response.setMessage("Error: bad request");
+
+            response.setMessage(r.getMessage());
             context.status(400);
         }
         Object jsonResponse = toJson(response);
