@@ -9,7 +9,6 @@ import static server.Handler.*;
 public class ClearService {
 
 
-
     public Response.ClearResponse clear(Request.ClearRequest request) throws DataAccessException {
 
 

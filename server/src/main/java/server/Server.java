@@ -7,8 +7,6 @@ public class Server {
     private final Javalin javalin;
 
 
-
-
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 

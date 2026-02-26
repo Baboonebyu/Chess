@@ -46,13 +46,12 @@ class RegistarHandler extends Handler {
         // System.out.println(request);
 
         RegisterResponse response = new RegisterResponse();
-        try{response = userService.register(request);
-        }
-        catch (BadRequestException r){
+        try {
+            response = userService.register(request);
+        } catch (BadRequestException r) {
             response.setMessage(r.getMessage());
             context.status(400);
-        }
-        catch (AlreadyTakenException r){
+        } catch (AlreadyTakenException r) {
             response.setMessage(r.getMessage());
             context.status(403);
         }
@@ -83,13 +82,12 @@ class LoginHandler extends Handler {
         LoginResponse response = new LoginResponse();
 
 
-
-        try{response = userService.login(request);}
-        catch (UnauthorisedException r){
+        try {
+            response = userService.login(request);
+        } catch (UnauthorisedException r) {
             response.setMessage(r.getMessage());
             context.status(401);
-        }
-        catch (BadRequestException r){
+        } catch (BadRequestException r) {
 
             response.setMessage(r.getMessage());
             context.status(400);
@@ -104,18 +102,19 @@ class LogoutHandler extends Handler {
         String authToken = context.header("authorization");
         LogoutResponse response = new LogoutResponse();
 
-        boolean Success = false;
-        try{
+        boolean success = false;
+        try {
             userService.verify(authToken);
-            Success = true;
-        }
-        catch (UnauthorisedException r){
+            success = true;
+        } catch (UnauthorisedException r) {
             context.status(401);
             response.setMessage(r.getMessage());
 
         }
-        if(Success){ LogoutRequest request = new LogoutRequest(authToken);
-            response = userService.logout(request);}
+        if (success) {
+            LogoutRequest request = new LogoutRequest(authToken);
+            response = userService.logout(request);
+        }
 
 
         Object jsonResponse = toJson(response);
@@ -130,24 +129,24 @@ class ListGameHandler extends Handler {
         ListGamesResponse response = new ListGamesResponse();
 
 
-        boolean Success = false;
-        try{
+        boolean success = false;
+        try {
             userService.verify(authToken);
-            Success = true;
-        }
-        catch (UnauthorisedException r){
+            success = true;
+        } catch (UnauthorisedException r) {
             context.status(401);
             response.setMessage(r.getMessage());
 
         }
-        if(Success){ ListGamesRequest request = new ListGamesRequest();
-            response = gameService.list(request);}
+        if (success) {
+            ListGamesRequest request = new ListGamesRequest();
+            response = gameService.list(request);
+        }
 
 
-
-            Object jsonResponse = toJson(response);
-            System.out.println(jsonResponse);
-            context.result(jsonResponse.toString());
+        Object jsonResponse = toJson(response);
+        System.out.println(jsonResponse);
+        context.result(jsonResponse.toString());
 
 
     }
@@ -159,21 +158,21 @@ class CreateGameHandler extends Handler {
         String authToken = context.header("authorization");
         context.contentType("application/json");
         CreateGameResponse response = new CreateGameResponse();
-        boolean Success = false;
-        try{
+        boolean success = false;
+        try {
             userService.verify(authToken);
-            Success = true;
-        }
-        catch (UnauthorisedException r){
+            success = true;
+        } catch (UnauthorisedException r) {
             context.status(401);
             response.setMessage(r.getMessage());
 
         }
-        if(Success){
+        if (success) {
             CreateGameRequest request = (CreateGameRequest) fromJson(context.body(), CreateGameRequest.class);
 
-            try{response = gameService.create(request);}
-            catch (BadRequestException r){
+            try {
+                response = gameService.create(request);
+            } catch (BadRequestException r) {
                 context.status(400);
                 response.setMessage(r.getMessage());
             }
@@ -193,27 +192,25 @@ class JoinGameHandler extends Handler {
 
         JoinGameResponse response = new JoinGameResponse();
 
-        boolean Success = false;
-        try{
+        boolean success = false;
+        try {
             userService.verify(authToken);
-            Success = true;
-        }
-        catch (UnauthorisedException r){
+            success = true;
+        } catch (UnauthorisedException r) {
             context.status(401);
             response.setMessage(r.getMessage());
 
         }
-        if (Success){
+        if (success) {
             JoinGameRequest request = (JoinGameRequest) fromJson(context.body(), JoinGameRequest.class);
             String userName = authDAO.getAuth(authToken).username();
 
-            try{
-            response = gameService.join(request, userName);}
-            catch (BadRequestException r){
+            try {
+                response = gameService.join(request, userName);
+            } catch (BadRequestException r) {
                 context.status(400);
                 response.setMessage(r.getMessage());
-            }
-            catch (AlreadyTakenException r){
+            } catch (AlreadyTakenException r) {
                 context.status(403);
                 response.setMessage(r.getMessage());
 

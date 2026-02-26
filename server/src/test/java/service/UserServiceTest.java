@@ -1,23 +1,19 @@
 package service;
 
 import dataaccess.*;
-import model.AuthData;
 import model.Request;
 import model.Response;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.Handler;
-
-import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static server.Handler.userDAO;
 import static server.Handler.*;
+
 class UserServiceTest {
 
-    final static UserService service = new UserService();
+    final static UserService USER_SERVICE = new UserService();
     String tUsername = "testUser";
     String tPassword = "testPassword";
     String tEmail = "testEmail";
@@ -30,8 +26,6 @@ class UserServiceTest {
     }
 
 
-
-
     @Test
     void registerTest() throws DataAccessException {
         String tUsername = "testUser";
@@ -42,22 +36,23 @@ class UserServiceTest {
         request.setPassword(tPassword);
         request.setEmail(tEmail);
 
-        service.register(request);
+        USER_SERVICE.register(request);
         UserData user = userDAO.getUser(tUsername);
         assertEquals(tUsername, user.username());
         assertEquals(tPassword, user.password());
         assertEquals(tEmail, user.email());
     }
+
     @Test
     void badRegisterTest() throws DataAccessException {
-        String tUsername =null;
+        String tUsername = null;
         String tPassword = "testPassword";
         String tEmail = "testEmail";
         Request.RegisterRequest request = new Request.RegisterRequest();
         request.setUsername(tUsername);
         request.setPassword(tPassword);
         request.setEmail(tEmail);
-      assertThrows(BadRequestException.class,()->service.register(request) );
+        assertThrows(BadRequestException.class, () -> USER_SERVICE.register(request));
 
     }
 
@@ -66,7 +61,7 @@ class UserServiceTest {
         String token = createUserForTest();
 
         Request.LogoutRequest logoutRequest = new Request.LogoutRequest(token);
-        service.logout(logoutRequest);
+        USER_SERVICE.logout(logoutRequest);
         assertNull(authDAO.getAuth(token));
     }
 
@@ -75,9 +70,8 @@ class UserServiceTest {
         createUserForTest();
         String badToken = "BadToken";
         Request.LogoutRequest logoutRequest = new Request.LogoutRequest(badToken);
-        assertThrows(UnauthorisedException.class,()->service.logout(logoutRequest) );
+        assertThrows(UnauthorisedException.class, () -> USER_SERVICE.logout(logoutRequest));
     }
-
 
 
     @Test
@@ -86,30 +80,31 @@ class UserServiceTest {
 
         //logs out the user so we can log in
         Request.LogoutRequest logoutRequest = new Request.LogoutRequest(token);
-        service.logout(logoutRequest);
+        USER_SERVICE.logout(logoutRequest);
         assertNull(authDAO.getAuth(token));
 
         Request.LoginRequest loginRequest = new Request.LoginRequest();
         loginRequest.setUsername(tUsername);
         loginRequest.setPassword(tPassword);
-        Response.LoginResponse response = service.login(loginRequest);
+        Response.LoginResponse response = USER_SERVICE.login(loginRequest);
         String rToken = response.getAuthToken();
-        assertNotNull( authDAO.getAuth(rToken));
+        assertNotNull(authDAO.getAuth(rToken));
 
 
     }
+
     @Test
     void loginBadTest() throws DataAccessException {
         String token = createUserForTest();
 
         //logs out the user so we can log in
         Request.LogoutRequest logoutRequest = new Request.LogoutRequest(token);
-        service.logout(logoutRequest);
+        USER_SERVICE.logout(logoutRequest);
         assertNull(authDAO.getAuth(token));
         Request.LoginRequest loginRequest = new Request.LoginRequest();
         loginRequest.setUsername(tUsername);
         loginRequest.setPassword("BadPassword");
-        assertThrows(UnauthorisedException.class, () -> service.login(loginRequest));
+        assertThrows(UnauthorisedException.class, () -> USER_SERVICE.login(loginRequest));
 
     }
 
@@ -118,7 +113,7 @@ class UserServiceTest {
     void verifyTest() throws DataAccessException {
         String token = createUserForTest();
 
-        assertEquals(true, service.verify(token));
+        assertEquals(true, USER_SERVICE.verify(token));
     }
 
     @Test
@@ -127,7 +122,7 @@ class UserServiceTest {
 
 
         String badToken = "BadToken";
-        assertThrows(UnauthorisedException.class, ()-> service.verify(badToken));
+        assertThrows(UnauthorisedException.class, () -> USER_SERVICE.verify(badToken));
     }
 
     String createUserForTest() throws DataAccessException {
@@ -138,7 +133,7 @@ class UserServiceTest {
         registerRequest.setEmail(tEmail);
 
         //create a user, auto logged in, Test that it worked
-        Response.RegisterResponse response = service.register(registerRequest);
+        Response.RegisterResponse response = USER_SERVICE.register(registerRequest);
         String token = response.getAuthToken();
         assertNotNull(authDAO.getAuth(token));
         return token;

@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static server.Handler.*;
 
 class ClearServiceTest {
-    static final ClearService service = new ClearService();
+    static final ClearService CLEAR_SERVICE = new ClearService();
 
 
     @BeforeEach
@@ -18,7 +18,7 @@ class ClearServiceTest {
         authDAO = new AuthMemoryDataAccess();
         gameDAO = new GameMemoryDataAccess();
 
-        userDAO.createUser("testUser","testPassword","testEmail");
+        userDAO.createUser("testUser", "testPassword", "testEmail");
         authDAO.createAuth("testUsername");
         gameDAO.createGame("testGame");
 
@@ -28,9 +28,10 @@ class ClearServiceTest {
         assertFalse(gameDAO.getGames().isEmpty());
 
     }
+
     @Test
     void clearTest() throws DataAccessException {
-        service.clear(new Request.ClearRequest());
+        CLEAR_SERVICE.clear(new Request.ClearRequest());
 
         assertTrue(userDAO.getUsers().isEmpty());
         assertTrue(authDAO.getAuths().isEmpty());

@@ -13,19 +13,15 @@ import static server.Handler.gameDAO;
 public class GameService {
 
 
-
-
-
     public CreateGameResponse create(CreateGameRequest request) throws DataAccessException {
 
         String gameName = request.getGameName();
-       // System.out.printf("this is the game name %s",gameName);
+        // System.out.printf("this is the game name %s",gameName);
         CreateGameResponse response = new CreateGameResponse();
 
-        if(request.getGameName() == null){
+        if (request.getGameName() == null) {
             throw new BadRequestException("Error: Bad Request");
-        }
-        else{
+        } else {
             String gameID = gameDAO.createGame(gameName);
             response.setGameID(gameID);
         }
@@ -34,7 +30,7 @@ public class GameService {
 
     public ListGamesResponse list(ListGamesRequest request) {
         ListGamesResponse response = new ListGamesResponse();
-        response.setGames( gameDAO.listGame());
+        response.setGames(gameDAO.listGame());
 
         return response;
     }
@@ -44,19 +40,18 @@ public class GameService {
         String playerColor = request.getPlayerColor();
         GameData game = gameDAO.getGame(gameID);
         JoinGameResponse response = new JoinGameResponse();
-        if (game == null){
+        if (game == null) {
             throw new BadRequestException("Error: Bad Request");
         }
-        if(!Objects.equals(playerColor, "WHITE") && !Objects.equals(playerColor, "BLACK")){
+        if (!Objects.equals(playerColor, "WHITE") && !Objects.equals(playerColor, "BLACK")) {
             throw new BadRequestException("Error: Bad Request");
         }
 
-        if (Objects.equals(playerColor, "WHITE") && game.whiteUsername()==null){
-           gameDAO.updateGame(gameID,userName,game.blackUsername(),game.gameName());
-        } else if (Objects.equals(playerColor, "BLACK") && game.blackUsername()==null) {
-            gameDAO.updateGame(gameID,game.whiteUsername(),userName,game.gameName());
-        }
-        else{
+        if (Objects.equals(playerColor, "WHITE") && game.whiteUsername() == null) {
+            gameDAO.updateGame(gameID, userName, game.blackUsername(), game.gameName());
+        } else if (Objects.equals(playerColor, "BLACK") && game.blackUsername() == null) {
+            gameDAO.updateGame(gameID, game.whiteUsername(), userName, game.gameName());
+        } else {
             throw new AlreadyTakenException("Error: already taken");
         }
         return null;
