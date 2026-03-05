@@ -90,7 +90,7 @@ public class SQLGameDataAccess implements GameDAO{
     public String createGame(String gameName) throws DataAccessException {
 
         try (Connection conn = DatabaseManager.getConnection()){
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO games (whiteUsername, blackUsername, gameName,json) VALUES (?, ?, ?,?)");
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO games (whiteUsername, blackUsername, gameName,json) VALUES (?, ?, ?,?)",PreparedStatement.RETURN_GENERATED_KEYS);
 
 
             ps.setString(1,null);
@@ -98,7 +98,15 @@ public class SQLGameDataAccess implements GameDAO{
             ps.setString(3,gameName);
             String json = new Gson().toJson(new ChessGame());
             ps.setString(4,json);
-            return String.valueOf(ps.executeUpdate());
+            ps.executeUpdate();
+
+
+            ResultSet rs = ps.getGeneratedKeys();
+
+            if (rs.next()) {
+                return String.valueOf(rs.getInt(1));
+            }
+            else throw new DataAccessException("No index returned");
         }
         catch (SQLException e){
             throw new DataAccessException(e.getMessage());
