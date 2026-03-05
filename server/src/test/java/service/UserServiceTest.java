@@ -19,8 +19,9 @@ class UserServiceTest {
     String tEmail = "testEmail";
 
     @BeforeEach
-    void setUp() {
-        userDAO = new UserMemoryDataAccess();
+    void setUp() throws DataAccessException {
+        userDAO = new SQLUserDataAccess();
+        userDAO.clear();
         authDAO = new AuthMemoryDataAccess();
         gameDAO = new GameMemoryDataAccess();
     }

@@ -23,7 +23,6 @@ public class UserService {
         String password = request.getPassword();
         String email = request.getEmail();
         if (username == null || password == null || email == null) {
-            RegisterResponse response = new RegisterResponse();
             throw new BadRequestException("Error Bad Request");
         }
 
@@ -40,7 +39,6 @@ public class UserService {
 
         } else {
 
-            RegisterResponse response = new RegisterResponse();
             throw new AlreadyTakenException("Error: already taken");
         }
 

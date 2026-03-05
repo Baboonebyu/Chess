@@ -12,7 +12,16 @@ import io.javalin.http.Context;
 
 public abstract class Handler implements io.javalin.http.Handler {
 
-    public static UserDAO userDAO = new UserMemoryDataAccess();
+    public static UserDAO userDAO;
+
+    static {
+        try {
+            userDAO = new SQLUserDataAccess();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static AuthDAO authDAO = new AuthMemoryDataAccess();
     public static GameDAO gameDAO = new GameMemoryDataAccess();
     UserService userService = new UserService();
