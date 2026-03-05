@@ -6,6 +6,7 @@ import model.Response;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static server.Handler.userDAO;
@@ -20,8 +21,7 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() throws DataAccessException {
-        userDAO = new SQLUserDataAccess();
-        userDAO.clear();
+        userDAO = new UserMemoryDataAccess();
         authDAO = new AuthMemoryDataAccess();
         gameDAO = new GameMemoryDataAccess();
     }
@@ -40,7 +40,7 @@ class UserServiceTest {
         USER_SERVICE.register(request);
         UserData user = userDAO.getUser(tUsername);
         assertEquals(tUsername, user.username());
-        assertEquals(tPassword, user.password());
+        assertTrue(BCrypt.checkpw(tPassword,user.password()));
         assertEquals(tEmail, user.email());
     }
 

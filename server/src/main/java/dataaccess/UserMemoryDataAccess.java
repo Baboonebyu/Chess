@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -27,7 +28,9 @@ public class UserMemoryDataAccess implements UserDAO {
 
 
     public UserData createUser(String username, String password, String email) throws DataAccessException {
-        UserData user = new UserData(username, password, email);
+
+        String hashedPW = BCrypt.hashpw(password, BCrypt.gensalt());
+        UserData user = new UserData(username, hashedPW, email);
         //    System.out.printf("adding this user %s", user);
         users.add(user);
 
