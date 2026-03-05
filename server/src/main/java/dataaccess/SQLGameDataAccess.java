@@ -25,7 +25,7 @@ public class SQLGameDataAccess implements GameDAO{
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
               `gameName` varchar(256) NOT NULL,
-              `chessGame` TEXT,
+              `json` LONGTEXT,
               PRIMARY KEY (`id`)
             )"""
     };
@@ -57,17 +57,17 @@ public class SQLGameDataAccess implements GameDAO{
                 if (!rs.isBeforeFirst()) {
                     return null;
                 }
-                String whiteUsernameR = null;
+                String whiteUsernameR = "bob";
                 String gameID = null;
                 String blackUsernameR = null;
                 String gameNameR = null;
                 ChessGame gameInfo = null;
                 while (rs.next()) {
                     gameID = rs.getString("id");
-                    whiteUsernameR = rs.getString("username");
-                    blackUsernameR = rs.getString("password");
-                    gameNameR = rs.getString("email");
-                    String data = rs.getString("chessGame");
+                    whiteUsernameR = rs.getString("whiteUsername");
+                    blackUsernameR = rs.getString("blackUsername");
+                    gameNameR = rs.getString("gameName");
+                    String data = rs.getString("json");
                     gameInfo = new Gson().fromJson(data, ChessGame.class);
                 }
                 return new GameData(gameID, whiteUsernameR, blackUsernameR, gameNameR, gameInfo);
@@ -83,14 +83,14 @@ public class SQLGameDataAccess implements GameDAO{
 
     @Override
     public ArrayList<GameData> listGame() throws DataAccessException {
-        return null;
+        return (getGames());
     }
 
     @Override
     public String createGame(String gameName) throws DataAccessException {
 
         try (Connection conn = DatabaseManager.getConnection()){
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO games (whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?,?)");
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO games (whiteUsername, blackUsername, gameName,json) VALUES (?, ?, ?,?)");
 
 
             ps.setString(1,null);
@@ -111,10 +111,12 @@ public class SQLGameDataAccess implements GameDAO{
     @Override
     public void updateGame(String gameID, String whiteUsername, String blackUsername, String gameName, ChessGame data) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()){
-            PreparedStatement ps = conn.prepareStatement("UPDATE games SET chessGame=? WHERE id=?");
+            PreparedStatement ps = conn.prepareStatement("UPDATE games SET json=?,whiteUsername=?,blackUserName=? WHERE id=?");
             String json = new Gson().toJson(data);
             ps.setString(1, json);
-            ps.setString(2, gameID);
+            ps.setString(2,whiteUsername);
+            ps.setString(3,blackUsername);
+            ps.setString(4, gameID);
             ps.executeUpdate();
 
 
@@ -150,7 +152,7 @@ public class SQLGameDataAccess implements GameDAO{
                     String whiteUsername =rs.getString("whiteUsername");
                     String blackUsername =rs.getString("blackUsername");
                     String gameName =rs.getString("gameName");
-                    String data = rs.getString("chessGame");
+                    String data = rs.getString("json");
 
                     chess.ChessGame chessGame = new Gson().fromJson(data, ChessGame.class);
                     GameData game = new GameData(id,whiteUsername,blackUsername,gameName,chessGame);
