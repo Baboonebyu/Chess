@@ -28,14 +28,14 @@ public class GameService {
         return response;
     }
 
-    public ListGamesResponse list(ListGamesRequest request) {
+    public ListGamesResponse list(ListGamesRequest request) throws DataAccessException {
         ListGamesResponse response = new ListGamesResponse();
         response.setGames(gameDAO.listGame());
 
         return response;
     }
 
-    public JoinGameResponse join(JoinGameRequest request, String userName) {
+    public JoinGameResponse join(JoinGameRequest request, String userName) throws DataAccessException {
         String gameID = request.getGameID();
         String playerColor = request.getPlayerColor();
         GameData game = gameDAO.getGame(gameID);
@@ -48,9 +48,9 @@ public class GameService {
         }
 
         if (Objects.equals(playerColor, "WHITE") && game.whiteUsername() == null) {
-            gameDAO.updateGame(gameID, userName, game.blackUsername(), game.gameName());
+            gameDAO.updateGame(gameID, userName, game.blackUsername(), game.gameName(), game.game());
         } else if (Objects.equals(playerColor, "BLACK") && game.blackUsername() == null) {
-            gameDAO.updateGame(gameID, game.whiteUsername(), userName, game.gameName());
+            gameDAO.updateGame(gameID, game.whiteUsername(), userName, game.gameName(),game.game());
         } else {
             throw new AlreadyTakenException("Error: already taken");
         }

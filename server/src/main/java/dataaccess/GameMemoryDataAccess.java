@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -38,16 +39,16 @@ public class GameMemoryDataAccess implements GameDAO {
     @Override
     public String createGame(String gameName) {
         nextGameId += 1;
-        GameData game = new GameData(String.valueOf(nextGameId), null, null, gameName);
+        GameData game = new GameData(String.valueOf(nextGameId), null, null, gameName,new ChessGame());
         games.add(game);
 
 
         return String.valueOf(nextGameId);
     }
 
-    public void updateGame(String gameID, String whiteUsername, String blackUsername, String gameName) {
+    public void updateGame(String gameID, String whiteUsername, String blackUsername, String gameName, ChessGame data) {
         games.remove(getGame(gameID));
-        GameData game = new GameData(gameID, whiteUsername, blackUsername, gameName);
+        GameData game = new GameData(gameID, whiteUsername, blackUsername, gameName,data);
         games.add(game);
 
     }

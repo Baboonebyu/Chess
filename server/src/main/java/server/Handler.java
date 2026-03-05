@@ -32,7 +32,16 @@ public abstract class Handler implements io.javalin.http.Handler {
         }
     }
 
-    public static GameDAO gameDAO = new GameMemoryDataAccess();
+    public static GameDAO gameDAO;
+
+    static {
+        try {
+            gameDAO = new SQLGameDataAccess();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     UserService userService = new UserService();
     ClearService clearService = new ClearService();
     GameService gameService = new GameService();
