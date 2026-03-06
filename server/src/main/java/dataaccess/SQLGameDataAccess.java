@@ -13,11 +13,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class SQLGameDataAccess implements GameDAO{
+public class SQLGameDataAccess implements GameDAO {
 
     public SQLGameDataAccess() throws DataAccessException {
         configureDatabase();
     }
+
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  games (
@@ -30,7 +31,7 @@ public class SQLGameDataAccess implements GameDAO{
             )"""
     };
 
-    private void configureDatabase() throws DataAccessException{
+    private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (Connection conn = DatabaseManager.getConnection()) {
             for (String statement : createStatements) {
@@ -44,14 +45,12 @@ public class SQLGameDataAccess implements GameDAO{
     }
 
 
-
-
     @Override
     public GameData getGame(String id) throws DataAccessException {
 
-        try (Connection conn = DatabaseManager.getConnection()){
+        try (Connection conn = DatabaseManager.getConnection()) {
             PreparedStatement ps = conn.prepareStatement("select * from games where id =?");
-            ps.setString(1,id);
+            ps.setString(1, id);
             try (ResultSet rs = ps.executeQuery()) {
 
                 if (!rs.isBeforeFirst()) {
@@ -74,9 +73,7 @@ public class SQLGameDataAccess implements GameDAO{
             }
 
 
-
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
     }
@@ -84,25 +81,24 @@ public class SQLGameDataAccess implements GameDAO{
     @Override
     public ArrayList<GameData> listGame() throws DataAccessException {
         ArrayList<GameData> games = new ArrayList<>();
-        try (Connection conn = DatabaseManager.getConnection()){
+        try (Connection conn = DatabaseManager.getConnection()) {
             PreparedStatement ps = conn.prepareStatement("select * from games");
             try (ResultSet rs = ps.executeQuery()) {
 
-                while (rs.next()){
+                while (rs.next()) {
                     String id = String.valueOf(rs.getInt("id"));
-                    String whiteUsername =rs.getString("whiteUsername");
-                    String blackUsername =rs.getString("blackUsername");
-                    String gameName =rs.getString("gameName");
+                    String whiteUsername = rs.getString("whiteUsername");
+                    String blackUsername = rs.getString("blackUsername");
+                    String gameName = rs.getString("gameName");
                     String data = rs.getString("json");
 
                     chess.ChessGame chessGame = new Gson().fromJson(data, ChessGame.class);
-                    GameData game = new GameData(id,whiteUsername,blackUsername,gameName,chessGame);
+                    GameData game = new GameData(id, whiteUsername, blackUsername, gameName, chessGame);
                     games.add(game);
 
                 }
             }
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
         return games;
@@ -112,15 +108,15 @@ public class SQLGameDataAccess implements GameDAO{
     @Override
     public String createGame(String gameName) throws DataAccessException {
 
-        try (Connection conn = DatabaseManager.getConnection()){
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO games (whiteUsername, blackUsername, gameName,json) VALUES (?, ?, ?,?)",PreparedStatement.RETURN_GENERATED_KEYS);
+        try (Connection conn = DatabaseManager.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO games (whiteUsername, blackUsername, gameName,json) VALUES (?, ?, ?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
 
 
-            ps.setString(1,null);
-            ps.setString(2,null);
-            ps.setString(3,gameName);
+            ps.setString(1, null);
+            ps.setString(2, null);
+            ps.setString(3, gameName);
             String json = new Gson().toJson(new ChessGame());
-            ps.setString(4,json);
+            ps.setString(4, json);
             ps.executeUpdate();
 
 
@@ -128,31 +124,29 @@ public class SQLGameDataAccess implements GameDAO{
 
             if (rs.next()) {
                 return String.valueOf(rs.getInt(1));
+            } else {
+                throw new DataAccessException("No index returned");
             }
-            else throw new DataAccessException("No index returned");
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
-
 
 
     }
 
     @Override
     public void updateGame(String gameID, String whiteUsername, String blackUsername, String gameName, ChessGame data) throws DataAccessException {
-        try (Connection conn = DatabaseManager.getConnection()){
+        try (Connection conn = DatabaseManager.getConnection()) {
             PreparedStatement ps = conn.prepareStatement("UPDATE games SET json=?,whiteUsername=?,blackUserName=? WHERE id=?");
             String json = new Gson().toJson(data);
             ps.setString(1, json);
-            ps.setString(2,whiteUsername);
-            ps.setString(3,blackUsername);
+            ps.setString(2, whiteUsername);
+            ps.setString(3, blackUsername);
             ps.setString(4, gameID);
             ps.executeUpdate();
 
 
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
     }
@@ -160,15 +154,15 @@ public class SQLGameDataAccess implements GameDAO{
 
     @Override
     public void clear() throws DataAccessException {
-        try (Connection conn = DatabaseManager.getConnection()){
+        try (Connection conn = DatabaseManager.getConnection()) {
             PreparedStatement ps = conn.prepareStatement("TRUNCATE TABLE games");
             ps.executeUpdate();
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
 
 
-    }}
+    }
+}
 
 

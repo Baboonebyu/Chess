@@ -1,5 +1,9 @@
 package dataaccess;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
+import chess.InvalidMoveException;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +90,46 @@ class GameDAOTest {
     }
 
     @Test
-    void updateGame() {
+    void updateGameUsernames() throws DataAccessException {
+        String tGameName = "testGame";
+        String wUserName = "whiteUserName";
+        String bUserName = "blackUserName";
+        String gameID = gameDAO.createGame(tGameName);
+        GameData game = gameDAO.getGame(gameID);
+        gameDAO.updateGame(gameID,wUserName,game.blackUsername(),game.gameName(),game.game());
+        game = gameDAO.getGame(gameID);
+        assertEquals(wUserName, game.whiteUsername());
+        gameDAO.updateGame(gameID,game.whiteUsername(),bUserName,game.gameName(),game.game());
+        game = gameDAO.getGame(gameID);
+        assertEquals(bUserName, game.blackUsername());
+    }
+    @Test
+    void updateGameBadID() throws DataAccessException {
+        String tGameName = "testGame";
+        String wUserName = "whiteUserName";
+        String bUserName = "blackUserName";
+        String gameID = gameDAO.createGame(tGameName);
+        GameData game = gameDAO.getGame(gameID);
+        assertThrows(DataAccessException.class,
+                ()-> gameDAO.updateGame("bad",wUserName,game.blackUsername(),game.gameName(),game.game()));
+    }
+    @Test
+    void updateGameMove() throws DataAccessException, InvalidMoveException {
+        String tGameName = "testGame";
+        String wUserName = "whiteUserName";
+        String bUserName = "blackUserName";
+        String gameID = gameDAO.createGame(tGameName);
+        GameData game = gameDAO.getGame(gameID);
+        gameDAO.updateGame(gameID,wUserName,bUserName,game.gameName(),game.game());
+        game = gameDAO.getGame(gameID);
+        ChessGame gameData = game.game();
+
+       gameData.makeMove(new ChessMove(new ChessPosition(2,2),new ChessPosition(3,2),null ));
+       gameDAO.updateGame(gameID,game.whiteUsername(),game.blackUsername(),game.gameName(),gameData);
+       game = gameDAO.getGame(gameID);
+
+       System.out.println(gameData.getBoard());
+       assertEquals(gameData,game.game());
     }
 
     @Test

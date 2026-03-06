@@ -26,7 +26,6 @@ public abstract class Handler implements io.javalin.http.Handler {
     }
 
 
-
     static {
         try {
             authDAO = new SQLAuthDataAccess();
@@ -34,7 +33,6 @@ public abstract class Handler implements io.javalin.http.Handler {
             throw new RuntimeException(e);
         }
     }
-
 
 
     static {
@@ -78,12 +76,10 @@ class RegistarHandler extends Handler {
         RegisterResponse response = new RegisterResponse();
         try {
             response = userService.register(request);
-        }
-        catch (DataAccessException r){
+        } catch (DataAccessException r) {
             context.status(500);
             response.setMessage("Error, DataAccessError");
-        }
-        catch (BadRequestException r) {
+        } catch (BadRequestException r) {
             response.setMessage(r.getMessage());
             context.status(400);
         } catch (AlreadyTakenException r) {
@@ -126,12 +122,10 @@ class LoginHandler extends Handler {
 
         try {
             response = userService.login(request);
-        }
-        catch (DataAccessException r){
+        } catch (DataAccessException r) {
             context.status(500);
             response.setMessage("Error, DataAccessError");
-        }
-        catch (UnauthorisedException r) {
+        } catch (UnauthorisedException r) {
             response.setMessage(r.getMessage());
             context.status(401);
         } catch (BadRequestException r) {
@@ -153,12 +147,10 @@ class LogoutHandler extends Handler {
         try {
             userService.verify(authToken);
             success = true;
-        }
-        catch (DataAccessException r){
+        } catch (DataAccessException r) {
             context.status(500);
             response.setMessage("Error, DataAccessError");
-        }
-        catch (UnauthorisedException r) {
+        } catch (UnauthorisedException r) {
             context.status(401);
             response.setMessage(r.getMessage());
 
@@ -185,12 +177,10 @@ class ListGameHandler extends Handler {
         try {
             userService.verify(authToken);
             success = true;
-        }
-        catch (DataAccessException r){
+        } catch (DataAccessException r) {
             context.status(500);
             response.setMessage("Error, DataAccessError");
-        }
-        catch (UnauthorisedException r) {
+        } catch (UnauthorisedException r) {
             context.status(401);
             response.setMessage(r.getMessage());
 
@@ -219,12 +209,10 @@ class CreateGameHandler extends Handler {
         try {
             userService.verify(authToken);
             success = true;
-        }
-        catch (DataAccessException r){
+        } catch (DataAccessException r) {
             context.status(500);
             response.setMessage("Error, DataAccessError");
-        }
-        catch (UnauthorisedException r) {
+        } catch (UnauthorisedException r) {
             context.status(401);
             response.setMessage(r.getMessage());
 
@@ -258,12 +246,10 @@ class JoinGameHandler extends Handler {
         try {
             userService.verify(authToken);
             success = true;
-        }
-        catch (DataAccessException r){
+        } catch (DataAccessException r) {
             context.status(500);
             response.setMessage("Error, DataAccessError");
-        }
-        catch (UnauthorisedException r) {
+        } catch (UnauthorisedException r) {
             context.status(401);
             response.setMessage(r.getMessage());
 

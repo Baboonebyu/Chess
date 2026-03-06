@@ -58,7 +58,7 @@ public class UserService {
 
         if (userDAO.getUser(username) == null) {
             throw new UnauthorisedException("Error Unauthorised");
-        } else if (!BCrypt.checkpw(password,user.password())) {
+        } else if (!BCrypt.checkpw(password, user.password())) {
             throw new UnauthorisedException("Error Unauthorised");
         }
         AuthData authData = authDAO.createAuth(username);

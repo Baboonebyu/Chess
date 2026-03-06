@@ -39,7 +39,7 @@ public class GameMemoryDataAccess implements GameDAO {
     @Override
     public String createGame(String gameName) {
         nextGameId += 1;
-        GameData game = new GameData(String.valueOf(nextGameId), null, null, gameName,new ChessGame());
+        GameData game = new GameData(String.valueOf(nextGameId), null, null, gameName, new ChessGame());
         games.add(game);
 
 
@@ -48,7 +48,7 @@ public class GameMemoryDataAccess implements GameDAO {
 
     public void updateGame(String gameID, String whiteUsername, String blackUsername, String gameName, ChessGame data) {
         games.remove(getGame(gameID));
-        GameData game = new GameData(gameID, whiteUsername, blackUsername, gameName,data);
+        GameData game = new GameData(gameID, whiteUsername, blackUsername, gameName, data);
         games.add(game);
 
     }
