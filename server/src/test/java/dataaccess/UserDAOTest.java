@@ -7,7 +7,6 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static server.Handler.*;
@@ -17,7 +16,7 @@ class UserDAOTest {
 
     @BeforeEach
     void setUp() throws DataAccessException {
-        DAOtestTools.DAOSetUp();
+        DAOTestTools.setUpDAO();
     }
 
     @Test

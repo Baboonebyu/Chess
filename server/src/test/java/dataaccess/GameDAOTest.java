@@ -5,20 +5,14 @@ import chess.ChessMove;
 import chess.ChessPosition;
 import chess.InvalidMoveException;
 import model.GameData;
-import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.Handler;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static server.Handler.*;
-import static server.Handler.authDAO;
 import static server.Handler.gameDAO;
-import static server.Handler.userDAO;
 
 
 class GameDAOTest {
@@ -26,7 +20,7 @@ class GameDAOTest {
 
     @BeforeEach
     void setUp() throws DataAccessException {
-        DAOtestTools.DAOSetUp();
+        DAOTestTools.setUpDAO();
     }
     @Test
     void getGame() throws DataAccessException {

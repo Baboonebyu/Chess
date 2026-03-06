@@ -7,8 +7,8 @@ import static server.Handler.authDAO;
 import static server.Handler.gameDAO;
 import static server.Handler.userDAO;
 
-public class DAOtestTools {
-    public static void DAOSetUp() throws DataAccessException {
+public class DAOTestTools {
+    public static void setUpDAO() throws DataAccessException {
         if (Objects.equals(type, "SQL")){
             userDAO = new SQLUserDataAccess();
             authDAO = new SQLAuthDataAccess();
