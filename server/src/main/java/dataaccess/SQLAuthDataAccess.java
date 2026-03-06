@@ -108,11 +108,12 @@ public class SQLAuthDataAccess implements AuthDAO{
         try (Connection conn = DatabaseManager.getConnection()){
             PreparedStatement ps = conn.prepareStatement("select * from auths");
             try (ResultSet rs = ps.executeQuery()) {
-                int pos = 1;
+
                 while (rs.next()){
+                    int pos = 2;
                     AuthData auth = new AuthData(rs.getString(pos),rs.getString(pos+1));
                     auths.add(auth);
-                    pos+=2;
+
                 }
             }
         }
