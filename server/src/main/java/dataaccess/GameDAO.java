@@ -17,6 +17,4 @@ public interface GameDAO {
     void updateGame(String gameID, String whiteUsername, String blackUsername, String gameName, ChessGame data) throws DataAccessException;
 
     void clear() throws DataAccessException;
-
-    ArrayList<GameData> getGames() throws DataAccessException;
 }

@@ -25,7 +25,7 @@ class ClearServiceTest {
 
         assertFalse(userDAO.getUsers().isEmpty());
         assertFalse(authDAO.getAuths().isEmpty());
-        assertFalse(gameDAO.getGames().isEmpty());
+        assertFalse(gameDAO.listGame().isEmpty());
 
     }
 
@@ -35,7 +35,7 @@ class ClearServiceTest {
 
         assertTrue(userDAO.getUsers().isEmpty());
         assertTrue(authDAO.getAuths().isEmpty());
-        assertTrue(gameDAO.getGames().isEmpty());
+        assertTrue(gameDAO.listGame().isEmpty());
 
     }
 }
