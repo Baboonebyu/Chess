@@ -12,7 +12,10 @@ import io.javalin.http.Context;
 
 public abstract class Handler implements io.javalin.http.Handler {
 
+    public static String type = "SQL";
     public static UserDAO userDAO;
+    public static AuthDAO authDAO;
+    public static GameDAO gameDAO;
 
     static {
         try {
@@ -22,7 +25,7 @@ public abstract class Handler implements io.javalin.http.Handler {
         }
     }
 
-    public static AuthDAO authDAO;
+
 
     static {
         try {
@@ -32,7 +35,7 @@ public abstract class Handler implements io.javalin.http.Handler {
         }
     }
 
-    public static GameDAO gameDAO;
+
 
     static {
         try {

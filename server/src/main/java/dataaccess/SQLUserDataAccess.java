@@ -107,11 +107,12 @@ public class SQLUserDataAccess implements UserDAO{
         try (Connection conn = DatabaseManager.getConnection()){
             PreparedStatement ps = conn.prepareStatement("select * from users");
             try (ResultSet rs = ps.executeQuery()) {
-                int pos = 1;
+
                 while (rs.next()){
+                    int pos = 2;
                     UserData user = new UserData(rs.getString(pos),rs.getString(pos+1),rs.getString(pos+2));
                     users.add(user);
-                    pos+=3;
+
                 }
             }
         }
