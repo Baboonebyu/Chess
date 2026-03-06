@@ -26,20 +26,7 @@ class GameDAOTest {
 
     @BeforeEach
     void setUp() throws DataAccessException {
-        if (Objects.equals(type, "SQL")){
-            userDAO = new SQLUserDataAccess();
-            authDAO = new SQLAuthDataAccess();
-            gameDAO = new SQLGameDataAccess();
-
-            userDAO.clear();
-            authDAO.clear();
-            gameDAO.clear();
-        }
-        else {
-            userDAO = new UserMemoryDataAccess();
-            authDAO = new AuthMemoryDataAccess();
-            gameDAO = new GameMemoryDataAccess();
-        }
+        DAOtestTools.DAOSetUp();
     }
     @Test
     void getGame() throws DataAccessException {
