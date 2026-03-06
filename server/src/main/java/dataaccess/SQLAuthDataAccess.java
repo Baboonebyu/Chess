@@ -14,30 +14,16 @@ import java.util.UUID;
 public class SQLAuthDataAccess implements AuthDAO {
 
     public SQLAuthDataAccess() throws DataAccessException {
-        configureDatabase();
-    }
-
-    private final String[] createStatements = {
-            """
+        String[] createStatements = {
+                """
             CREATE TABLE IF NOT EXISTS  auths (
               `id` int NOT NULL AUTO_INCREMENT,
               `authToken` varchar(256),
               `username` varchar(256) NOT NULL,
               PRIMARY KEY (`id`)
             )"""
-    };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException("Error Configuring Database");
-        }
+        };
+        DatabaseManager.configureDatabase(createStatements);
     }
 
 

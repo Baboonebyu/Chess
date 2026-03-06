@@ -46,7 +46,7 @@ class GameDAOTest {
         String tGameName = "testGame";
         String gameID = gameDAO.createGame(tGameName);
         GameData game = gameDAO.getGame(gameID);
-        assertEquals(game.gameName(), tGameName);
+        assertEquals(tGameName, game.gameName());
     }
     @Test
     void getGameNull() throws DataAccessException {

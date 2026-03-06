@@ -13,11 +13,8 @@ import java.util.ArrayList;
 public class SQLUserDataAccess implements UserDAO {
 
     public SQLUserDataAccess() throws DataAccessException {
-        configureDatabase();
-    }
-
-    private final String[] createStatements = {
-            """
+        String[] createStatements = {
+                """
             CREATE TABLE IF NOT EXISTS  users (
               `id` int NOT NULL AUTO_INCREMENT,
               `username` varchar(256) NOT NULL,
@@ -25,19 +22,8 @@ public class SQLUserDataAccess implements UserDAO {
               `email` varchar(256) NOT NULL,
               PRIMARY KEY (`id`)
             )"""
-    };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException("Error Configuring Database");
-        }
+        };
+        DatabaseManager.configureDatabase(createStatements);
     }
 
 

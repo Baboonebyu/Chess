@@ -16,11 +16,8 @@ import java.util.Objects;
 public class SQLGameDataAccess implements GameDAO {
 
     public SQLGameDataAccess() throws DataAccessException {
-        configureDatabase();
-    }
-
-    private final String[] createStatements = {
-            """
+        String[] createStatements = {
+                """
             CREATE TABLE IF NOT EXISTS  games (
               `id` int NOT NULL AUTO_INCREMENT,
               `whiteUsername` varchar(256),
@@ -29,19 +26,8 @@ public class SQLGameDataAccess implements GameDAO {
               `json` LONGTEXT,
               PRIMARY KEY (`id`)
             )"""
-    };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException("Error Configuring Database");
-        }
+        };
+        DatabaseManager.configureDatabase(createStatements);
     }
 
 
@@ -109,7 +95,9 @@ public class SQLGameDataAccess implements GameDAO {
     public String createGame(String gameName) throws DataAccessException {
 
         try (Connection conn = DatabaseManager.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO games (whiteUsername, blackUsername, gameName,json) VALUES (?, ?, ?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = conn.prepareStatement
+                    ("INSERT INTO games (whiteUsername, blackUsername, gameName,json) VALUES (?, ?, ?,?)",
+                            PreparedStatement.RETURN_GENERATED_KEYS);
 
 
             ps.setString(1, null);
