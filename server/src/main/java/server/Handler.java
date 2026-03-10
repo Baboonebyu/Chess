@@ -10,38 +10,51 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.http.Context;
 
+import java.util.Objects;
+
 public abstract class Handler implements io.javalin.http.Handler {
+
+
 
     public static String type = "SQL";
     public static UserDAO userDAO;
     public static AuthDAO authDAO;
     public static GameDAO gameDAO;
 
-    static {
-        try {
-            userDAO = new SQLUserDataAccess();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+    public Handler() {
+        //use SQL or Memory
+        if(Objects.equals(type, "SQL")){
+            try {
+                userDAO = new SQLUserDataAccess();
+            } catch (DataAccessException e) {
+                throw new RuntimeException(e);
+            }
+
+
+
+
+                try {
+                    authDAO = new SQLAuthDataAccess();
+                } catch (DataAccessException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+
+
+                try {
+                    gameDAO = new SQLGameDataAccess();
+                } catch (DataAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        else{
+            userDAO = new UserMemoryDataAccess();
+            authDAO = new AuthMemoryDataAccess();
+            gameDAO = new GameMemoryDataAccess();
         }
     }
 
-
-    static {
-        try {
-            authDAO = new SQLAuthDataAccess();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    static {
-        try {
-            gameDAO = new SQLGameDataAccess();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     UserService userService = new UserService();
     ClearService clearService = new ClearService();
