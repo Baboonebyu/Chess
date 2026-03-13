@@ -33,7 +33,7 @@ public class BoardDrawer {
     int cInit =1;
     public void setUp(){
         if (Objects.equals(color, "Black")){
-
+            rowHeader = new String[]{" h ", " g ", " f ", " e ", " d ", " c ", " b ", " a "};
             pRow = 1;
             pCol = 8;
             modCol = -1;
@@ -48,6 +48,7 @@ public class BoardDrawer {
     public void drawBoard(ChessBoard board){
         this.board = board;
        //top row
+        out.print(ERASE_SCREEN);
         setUp();
         letterLine();
 
