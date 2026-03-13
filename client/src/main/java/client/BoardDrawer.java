@@ -5,7 +5,6 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
-import java.util.Collection;
 import java.util.Objects;
 
 import static ui.EscapeSequences.*;
@@ -19,16 +18,23 @@ public class BoardDrawer {
     }
     String[] rowHeader = {" a "," b "," c "," d "," e "," f "," g "," h "};
     String[] colHeader = {" 1 "," 2 "," 3 "," 4 "," 5 "," 6 "," 7 "," 8 "};
-    int bCol = 0;
-    int bRow = 7;
+
+    int pRow = 8;
+    int pCol = 1;
+
+    int rowCount = 1;
+    int colCount =1;
+    int header = 8;
+    int headerMod = -1;
+
+
     String colorState = "White";
     int modCol = 1;
     int modRow = -1;
 
     public void setUp(){
         if (Objects.equals(color, "Black")){
-            bCol = 7;
-            bRow = 0;
+
             modCol = -1;
             modRow = -1;
 
@@ -44,21 +50,26 @@ public class BoardDrawer {
         letterLine();
 
 
-        while (bRow>=0) {
+        while (rowCount <= 8) {
 
             out.print(SET_BG_COLOR_DARK_GREY);
-            out.print(colHeader[bRow]);
+            out.print(" "+header+" ");
             swapState();
-            while (bCol < 8) {
-                printPiece(bRow, bCol);
-                bCol += modCol;
+            while (colCount <= 8) {
+                printPiece();
+                colCount +=1;
+                pCol += modCol;
                 swapState();
             }
             out.print(SET_BG_COLOR_DARK_GREY);
-            out.print(colHeader[bRow]);
-            bCol = 0;
+            pCol =1;
+            out.print(" "+header+" ");
+
+            header+=headerMod;
+            colCount = 1;
         finishLine();
-        bRow += modRow;
+        pRow += modRow;
+        rowCount +=1;
 
         }
 
@@ -94,9 +105,9 @@ public class BoardDrawer {
         }
     }
 
-    private void printPiece(int row, int col) {
+    private void printPiece() {
 
-        ChessPiece piece = board.getPiece(new ChessPosition(row + 1, col + 1));
+        ChessPiece piece = board.getPiece(new ChessPosition(pRow, pCol));
         if (piece != null) {
             if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                 out.print(SET_TEXT_COLOR_BLUE);
