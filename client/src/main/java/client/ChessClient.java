@@ -11,7 +11,7 @@ public class ChessClient {
 
 
     public void run () {
-        BoardDrawer drawer = new BoardDrawer("White");
+        BoardDrawer drawer = new BoardDrawer("Black");
         ChessGame game = new ChessGame();
         ChessBoard board = game.getBoard();
         drawer.drawBoard(board);

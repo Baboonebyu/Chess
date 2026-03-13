@@ -17,7 +17,6 @@ public class BoardDrawer {
         this.color = color;
     }
     String[] rowHeader = {" a "," b "," c "," d "," e "," f "," g "," h "};
-    String[] colHeader = {" 1 "," 2 "," 3 "," 4 "," 5 "," 6 "," 7 "," 8 "};
 
     int pRow = 8;
     int pCol = 1;
@@ -31,12 +30,15 @@ public class BoardDrawer {
     String colorState = "White";
     int modCol = 1;
     int modRow = -1;
-
+    int cInit =1;
     public void setUp(){
         if (Objects.equals(color, "Black")){
 
+            pRow = 1;
+            pCol = 8;
             modCol = -1;
-            modRow = -1;
+            modRow = 1;
+            cInit = 8;
 
         }
     }
@@ -62,7 +64,7 @@ public class BoardDrawer {
                 swapState();
             }
             out.print(SET_BG_COLOR_DARK_GREY);
-            pCol =1;
+            pCol = cInit ;
             out.print(" "+header+" ");
 
             header+=headerMod;
