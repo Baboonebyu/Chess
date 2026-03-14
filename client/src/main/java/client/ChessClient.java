@@ -16,7 +16,7 @@ public class ChessClient {
 
     public ChessClient() {
     }
-    private boolean logedIn = false;
+    private boolean loggedIn = false;
     private boolean inGame = false;
 
 
@@ -40,8 +40,8 @@ public class ChessClient {
 
 
             out.print(ERASE_SCREEN);
-            if (!logedIn){printMenu1();}
-            else if (logedIn && !inGame){
+            if (!loggedIn){printMenu1();}
+            else if (loggedIn && !inGame){
                 printMenu2();
             }
 
@@ -56,21 +56,9 @@ public class ChessClient {
                 out.print(msg);
             }
         }
-        logedIn = false;
+        loggedIn = false;
         inGame = false;
     }
-
-    private void logedInLoop(){
-
-
-
-
-
-    }
-
-
-
-
 
 
     private void printPrompt() {
@@ -87,10 +75,10 @@ public class ChessClient {
 
     private void printMenu2(){
 
-        out.print("\nCREATE <Name> \n");
+        out.print("\nCREATE <GameName> \n");
         out.print("LIST \n");
         out.print("JOIN <ID> [White|Black]\n");
-        out.print("OBSERVE <ID>\n");
+        out.print("Spectate <ID>\n");
         out.print("LOGOUT\n");
         out.print("quit\n");
         out.print("HELP \n");
@@ -107,6 +95,13 @@ public class ChessClient {
                 case "register" -> register(params);
                 case "login" -> login(params);
                 case  "quit" -> "quit";
+                case "create" -> create(params);
+                case "list" -> list(params);
+                case "join" -> join(params);
+                case "spectate" -> spectate(params);
+                case "logout" -> logout(params);
+
+
                 default -> help();
             };
         } catch (Exception ex) {
@@ -115,24 +110,36 @@ public class ChessClient {
     }
 
     private String help() {
-        if (!logedIn){
+        if (!loggedIn){
            out.print("To login or register please enter the command word \n");
            out.print("Followed by the necessary arguments as found in the <>\n");
            out.print("Example >>> Login Bob password\n");
         }
         else if (!inGame){
-            out.print("loged in help goes here\n");
+            out.print("Please enter a command word \n");
+            out.print("Followed by the necessary arguments as found in the <>\n");
+            out.print("Create - Makes a new game\n");
+            out.println("List - Lists current games");
+            out.println("Join - Joins the game with the ID, Specify color as White or Black");
+            out.println("Spectate - Watch the game at the listed ID");
+            out.println("Logout - Logout and return to login menu");
+            out.println("Quit - Exits the program");
+            out.println("Display this message");
         }
 
 
         return "";
     }
 
-    private String login(String[] params) {
-        logedIn = true;
-        return "hi " +params[0];
+    private String login(String[] params) throws Exception {
+        if (params.length == 2) {
 
 
+            loggedIn = true;
+            return "hi " + params[0];
+
+        }
+        throw new Exception("Invalid format: Expected username password\n");
 
 
 
@@ -140,8 +147,41 @@ public class ChessClient {
     }
 
 
-    private String register(String[] params){
-        return "hi register";
+    private String register(String[] params) throws Exception {
+        if (params.length == 3) {
+
+
+            loggedIn = true;
+            return "hi " + params[0];
+
+        }
+        throw new Exception("Invalid format: Expected username password email\n");
+
+
+    }
+
+    private String create(String[] params) throws Exception {
+        if (params.length == 1) {
+
+
+            return "hi create";
+
+        }
+        throw new Exception("Invalid format: Expected GameName\n");
+
+    }
+    private String list(String[] params){
+        return "hi list";
+    }
+    private String join(String[] params){
+        return "hi join";
+    }
+    private String spectate(String[] params){
+        return "hi spectate";
+    }
+    private String logout(String[] params){
+        loggedIn = false;
+        return "hi logout";
     }
 }
 
