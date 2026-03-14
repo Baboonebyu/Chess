@@ -5,6 +5,7 @@ import chess.ChessBoard;
 import chess.ChessGame;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Scanner;
 
 import static java.lang.System.out;
@@ -40,10 +41,12 @@ public class ChessClient {
 
 
             out.print(ERASE_SCREEN);
-            if (!loggedIn){printMenu1();}
-            else if (loggedIn && !inGame){
-                printMenu2();
+            if (!loggedIn){
+                printLoggedOutMenu();}
+            else if (!inGame){
+                printLoggedInMenu();
             }
+            //add menu3
 
 
             printPrompt();
@@ -64,7 +67,7 @@ public class ChessClient {
     private void printPrompt() {
         out.print(SET_TEXT_COLOR_WHITE + ">>> " + SET_TEXT_COLOR_GREEN);
     }
-    private void printMenu1(){
+    private void printLoggedOutMenu(){
 
         out.print("\nREGISTER <Username> <Password> <Email> \n");
         out.print("LOGIN <Username> <Password> \n");
@@ -73,7 +76,7 @@ public class ChessClient {
 
     }
 
-    private void printMenu2(){
+    private void printLoggedInMenu(){
 
         out.print("\nCREATE <GameName> \n");
         out.print("LIST \n");
@@ -133,7 +136,8 @@ public class ChessClient {
 
     private String login(String[] params) throws Exception {
         if (params.length == 2) {
-
+            String username = params[0];
+            String password = params[1];
 
             loggedIn = true;
             return "hi " + params[0];
@@ -149,6 +153,9 @@ public class ChessClient {
 
     private String register(String[] params) throws Exception {
         if (params.length == 3) {
+            String username = params[0];
+            String password = params[1];
+            String email = params[2];
 
 
             loggedIn = true;
@@ -162,7 +169,7 @@ public class ChessClient {
 
     private String create(String[] params) throws Exception {
         if (params.length == 1) {
-
+            String gameName = params[0];
 
             return "hi create";
 
@@ -174,17 +181,22 @@ public class ChessClient {
         return "hi list";
     }
     private String join(String[] params) throws Exception {
-        if (params.length == 1) {
-
-
+        if (params.length == 2) {
+            String gameID = params[0];
+            String color = params[1];
+            color = color.toLowerCase(Locale.ROOT);
+            if (!color.equals("white") && !color.equals("black"))
+            {
+                throw new Exception("Invalid color: Expected White or Black\n");
+            }
             return "hi join";
 
         }
-        throw new Exception("Invalid format: Expected GameID\n");
+        throw new Exception("Invalid format: Expected GameID Color\n");
     }
     private String spectate(String[] params) throws Exception {
         if (params.length == 1) {
-
+            String gameID = params[0];
 
             return "hi spectate";
 
