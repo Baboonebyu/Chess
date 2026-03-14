@@ -92,7 +92,7 @@ public class BoardDrawer {
     }
 
     private static void finishLine() {
-        out.print(SET_BG_COLOR_BLACK);
+        out.print(RESET_BG_COLOR);
         out.print('\n');
     }
     private  void swapState(){
