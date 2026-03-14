@@ -96,10 +96,10 @@ public class ChessClient {
                 case "login" -> login(params);
                 case  "quit" -> "quit";
                 case "create" -> create(params);
-                case "list" -> list(params);
+                case "list" -> list();
                 case "join" -> join(params);
                 case "spectate" -> spectate(params);
-                case "logout" -> logout(params);
+                case "logout" -> logout();
 
 
                 default -> help();
@@ -170,16 +170,28 @@ public class ChessClient {
         throw new Exception("Invalid format: Expected GameName\n");
 
     }
-    private String list(String[] params){
+    private String list(){
         return "hi list";
     }
-    private String join(String[] params){
-        return "hi join";
+    private String join(String[] params) throws Exception {
+        if (params.length == 1) {
+
+
+            return "hi join";
+
+        }
+        throw new Exception("Invalid format: Expected GameID\n");
     }
-    private String spectate(String[] params){
-        return "hi spectate";
+    private String spectate(String[] params) throws Exception {
+        if (params.length == 1) {
+
+
+            return "hi spectate";
+
+        }
+        throw new Exception("Invalid format: Expected GameID\n");
     }
-    private String logout(String[] params){
+    private String logout(){
         loggedIn = false;
         return "hi logout";
     }
