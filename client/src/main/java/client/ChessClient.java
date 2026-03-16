@@ -8,14 +8,19 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Scanner;
 
+import model.Request;
+import model.Request.*;
+import model.Response.*;
 import static java.lang.System.out;
-
+import sharedServerFiles.ServerFacade;
 import static ui.EscapeSequences.*;
 
 
 public class ChessClient {
+    private final ServerFacade server;
 
-    public ChessClient() {
+    public ChessClient(String serverUrl) {
+        server = new ServerFacade(serverUrl);
     }
     private boolean loggedIn = false;
     private boolean inGame = false;
@@ -54,9 +59,12 @@ public class ChessClient {
             try {
                 result = eval(line);
                 out.print(result);
+                out.print(SET_TEXT_COLOR_GREEN);
             } catch (Throwable e) {
                 var msg = e.toString();
+
                 out.print(msg);
+
             }
         }
         loggedIn = false;
@@ -108,6 +116,7 @@ public class ChessClient {
                 default -> help();
             };
         } catch (Exception ex) {
+            out.print(SET_TEXT_COLOR_RED);
             return ex.getMessage();
         }
     }
@@ -138,6 +147,11 @@ public class ChessClient {
         if (params.length == 2) {
             String username = params[0];
             String password = params[1];
+            Request.LoginRequest request = new Request.LoginRequest();
+            request.setUsername(username);
+            request.setPassword(password);
+
+            LoginResponse response = server.loginUser(request);
 
             loggedIn = true;
             return "hi " + params[0];
@@ -157,6 +171,12 @@ public class ChessClient {
             String password = params[1];
             String email = params[2];
 
+            RegisterRequest request = new RegisterRequest();
+            request.setUsername(username);
+            request.setPassword(password);
+            request.setEmail(email);
+
+            RegisterResponse response = server.registerUser(request);
 
             loggedIn = true;
             return "hi " + params[0];
