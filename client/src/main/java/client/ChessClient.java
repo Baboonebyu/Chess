@@ -51,6 +51,7 @@ public class ChessClient {
             else if (!inGame){
                 printLoggedInMenu();
             }
+
             //add menu3
 
 
