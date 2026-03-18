@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import model.Request;
 import model.Request.*;
+import model.Response;
 import model.Response.*;
 import static java.lang.System.out;
 import sharedServerFiles.ServerFacade;
@@ -177,7 +178,7 @@ public class ChessClient {
             request.setPassword(password);
             request.setEmail(email);
 
-            RegisterResponse response = server.registerUser(request);
+            Response response = server.registerUser(request);
 
             loggedIn = true;
             return "hi " + params[0];
