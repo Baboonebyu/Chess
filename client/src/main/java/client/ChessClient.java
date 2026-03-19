@@ -235,11 +235,9 @@ public class ChessClient {
     private String list() throws Exception {
 
         ArrayList<GameData> games = getGames();
-        ArrayList<String> gameNames = new ArrayList<>();
 
-        for(GameData game :games){
-            gameNames.add(game.gameName());
-        }
+
+
 
         StringBuilder sb = new StringBuilder();
         int counter = 1;

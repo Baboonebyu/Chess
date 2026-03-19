@@ -33,7 +33,7 @@ public class ServerFacade {
     public ListGamesResponse listGames(ListGamesRequest request, String token) throws Exception {
         return (ListGamesResponse) ClientCommunicator.get(serverUrl, "/game",request,ListGamesResponse.class,token);
     }
-    public void spectateGame(String gameID){}
+  //  public void spectateGame(String gameID){}
     public LogoutResponse logoutUser(LogoutRequest request, String token) throws Exception {
         return (LogoutResponse) ClientCommunicator.delete(serverUrl,  "/session" ,request,LogoutResponse.class,token);
     }
@@ -42,6 +42,9 @@ public class ServerFacade {
         return (JoinGameResponse) ClientCommunicator.put(serverUrl, "/game",request,JoinGameResponse.class,token);
     }
 
+    public void clearDatabase(ClearRequest request) throws Exception {
+        ClientCommunicator.delete(serverUrl,  "/db" ,request, ClearResponse.class,null);
+    }
 
 
 }
