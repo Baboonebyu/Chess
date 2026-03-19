@@ -11,7 +11,7 @@ import model.Request;
 import model.Request.*;
 import model.Response.*;
 import static java.lang.System.out;
-import sharedServerFiles.ServerFacade;
+import shared.server.files.ServerFacade;
 import static ui.EscapeSequences.*;
 
 

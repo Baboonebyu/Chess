@@ -1,4 +1,4 @@
-package sharedServerFiles;
+package shared.server.files;
 
 import com.google.gson.Gson;
 import model.Request;
@@ -13,23 +13,29 @@ import java.net.http.HttpResponse.BodyHandlers;
 
 public class ClientCommunicator {
     private static final int TIMEOUT_MILLIS = 5000;
-    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final HttpClient CLIENT = HttpClient.newHttpClient();
 
-    public static <T extends Response> Response post(String serverUrl, String path , Request request, Class<T> responseClass,String token) throws Exception {
+    public static <T extends Response> Response post(
+            String serverUrl, String path , Request request, Class<T> responseClass,String token)
+            throws Exception {
         HttpRequest httpRequest = requestBuilder("POST", serverUrl,path,request,token);
         var hResponse = sendRequest(httpRequest);
 
         return handleResponse(hResponse,responseClass);
     }
 
-    public static <T extends Response> Response put(String serverUrl, String path , Request request, Class<T> responseClass,String token) throws Exception {
+    public static <T extends Response> Response put(
+            String serverUrl, String path , Request request, Class<T> responseClass,String token)
+            throws Exception {
         HttpRequest httpRequest = requestBuilder("PUT", serverUrl,path,request,token);
         var hResponse = sendRequest(httpRequest);
 
         return handleResponse(hResponse,responseClass);
     }
 
-    public static <T extends Response> Response get(String serverUrl, String path , Request request, Class<T> responseClass,String token) throws Exception {
+    public static <T extends Response> Response get(
+            String serverUrl, String path , Request request, Class<T> responseClass,String token)
+            throws Exception {
         HttpRequest httpRequest = requestBuilder("GET", serverUrl,path,request,token);
         var hResponse = sendRequest(httpRequest);
 
@@ -37,7 +43,9 @@ public class ClientCommunicator {
     }
 
 
-    public static <T extends Response> Response delete(String serverUrl, String path , Request request, Class<T> responseClass,String token) throws Exception {
+    public static <T extends Response> Response delete(
+            String serverUrl, String path , Request request, Class<T> responseClass,String token)
+            throws Exception {
         HttpRequest httpRequest = requestBuilder("Delete", serverUrl,path,request,token);
 
         var hResponse = sendRequest(httpRequest);
@@ -79,7 +87,7 @@ public class ClientCommunicator {
     }
     private static HttpResponse<String> sendRequest(HttpRequest request) throws Exception {
         try {
-            return client.send(request, BodyHandlers.ofString());
+            return CLIENT.send(request, BodyHandlers.ofString());
         } catch (Exception ex) {
             throw new Exception( ex.getMessage());
         }

@@ -1,4 +1,4 @@
-package sharedServerFiles;
+package shared.server.files;
 
 import model.Request.*;
 import model.Response.*;

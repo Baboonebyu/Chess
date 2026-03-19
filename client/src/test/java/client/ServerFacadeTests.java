@@ -5,7 +5,7 @@ import model.Request;
 import model.Response;
 import org.junit.jupiter.api.*;
 import server.Server;
-import sharedServerFiles.ServerFacade;
+import shared.server.files.ServerFacade;
 
 import java.util.ArrayList;
 
