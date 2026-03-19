@@ -30,7 +30,9 @@ public class ServerFacade {
 
 
     }
-    public void listGames(){}
+    public ListGamesResponse listGames(ListGamesRequest request, String token) throws Exception {
+        return (ListGamesResponse) ClientCommunicator.get(serverUrl, "/game",request,ListGamesResponse.class,token);
+    }
     public void spectateGame(String gameID){}
     public LogoutResponse logoutUser(LogoutRequest request, String token) throws Exception {
         return (LogoutResponse) ClientCommunicator.delete(serverUrl,  "/session" ,request,LogoutResponse.class,token);

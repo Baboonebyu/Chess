@@ -22,6 +22,14 @@ public class ClientCommunicator {
         return handleResponse(hResponse,responseClass);
     }
 
+    public static <T extends Response> Response get(String serverUrl, String path , Request request, Class<T> responseClass,String token) throws Exception {
+        HttpRequest httpRequest = requestBuilder("GET", serverUrl,path,request,token);
+        var hResponse = sendRequest(httpRequest);
+
+        return handleResponse(hResponse,responseClass);
+    }
+
+
     public static <T extends Response> Response delete(String serverUrl, String path , Request request, Class<T> responseClass,String token) throws Exception {
         HttpRequest httpRequest = requestBuilder("Delete", serverUrl,path,request,token);
 

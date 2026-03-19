@@ -4,14 +4,11 @@ package client;
 import chess.ChessBoard;
 import chess.ChessGame;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
+import model.GameData;
 import model.Request;
 import model.Request.*;
-import model.Response;
 import model.Response.*;
 import static java.lang.System.out;
 import sharedServerFiles.ServerFacade;
@@ -28,6 +25,7 @@ public class ChessClient {
     private boolean inGame = false;
     private String authToken = null;
     private String clientName = null;
+    ArrayList<String> gameNames = new ArrayList<>();
 
 
     public void run () {
@@ -112,7 +110,7 @@ public class ChessClient {
                 case "login" -> login(params);
                 case  "quit" -> "quit";
                 case "create" -> create(params);
-                case "list" -> list();
+                case "list" -> list(params);
                 case "join" -> join(params);
                 case "spectate" -> spectate(params);
                 case "logout" -> logout();
@@ -220,12 +218,30 @@ public class ChessClient {
         throw new Exception("Invalid format: Expected GameName\n");
 
     }
-    private String list(){
+    private String list(String[] params) throws Exception {
 
+        ListGamesRequest request = new ListGamesRequest();
+        ListGamesResponse response = server.listGames(request,authToken);
+        ArrayList<GameData> games = response.getGames();
+        gameNames.clear();
 
+        for(GameData game :games){
+            gameNames.add(game.gameName());
+        }
 
-        return "hi list";
+        StringBuilder sb = new StringBuilder();
+        int counter = 1;
+
+        for (String name: gameNames){
+            sb.append(counter);
+            counter+=1;
+            sb.append(": ");
+            sb.append(name);
+            sb.append("\n");
+        }
+        return sb.toString();
     }
+
     private String join(String[] params) throws Exception {
         if (params.length == 2) {
             String gameID = params[0];
