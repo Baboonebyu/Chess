@@ -32,7 +32,7 @@ public class BoardDrawer {
     int modRow = -1;
     int cInit =1;
     public void setUp(){
-        if (Objects.equals(color, "Black")){
+        if (Objects.equals(color, "BLACK")){
             rowHeader = new String[]{" h ", " g ", " f ", " e ", " d ", " c ", " b ", " a "};
             pRow = 1;
             pCol = 8;

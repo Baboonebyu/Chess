@@ -44,7 +44,7 @@ public class GameService {
             throw new BadRequestException("Error: Bad Request");
         }
         if (!Objects.equals(playerColor, "WHITE") && !Objects.equals(playerColor, "BLACK")) {
-            throw new BadRequestException("Error: Bad Request");
+            throw new BadRequestException("Error: Bad Request, Color off");
         }
 
         if (Objects.equals(playerColor, "WHITE") && game.whiteUsername() == null) {

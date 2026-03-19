@@ -22,6 +22,13 @@ public class ClientCommunicator {
         return handleResponse(hResponse,responseClass);
     }
 
+    public static <T extends Response> Response put(String serverUrl, String path , Request request, Class<T> responseClass,String token) throws Exception {
+        HttpRequest httpRequest = requestBuilder("PUT", serverUrl,path,request,token);
+        var hResponse = sendRequest(httpRequest);
+
+        return handleResponse(hResponse,responseClass);
+    }
+
     public static <T extends Response> Response get(String serverUrl, String path , Request request, Class<T> responseClass,String token) throws Exception {
         HttpRequest httpRequest = requestBuilder("GET", serverUrl,path,request,token);
         var hResponse = sendRequest(httpRequest);
@@ -47,7 +54,7 @@ public class ClientCommunicator {
         var hRequest = HttpRequest.newBuilder()
 
                 .uri(URI.create(serverUrl + path))
-                .timeout(java.time.Duration.ofMillis(TIMEOUT_MILLIS))
+                //.timeout(java.time.Duration.ofMillis(TIMEOUT_MILLIS))
                 .method(method, makeRequestBody(body));
         if(token != null)
         {

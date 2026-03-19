@@ -23,9 +23,11 @@ public class ChessClient {
     }
     private boolean loggedIn = false;
     private boolean inGame = false;
+    private String currentGameID = null;
     private String authToken = null;
     private String clientName = null;
-    ArrayList<String> gameNames = new ArrayList<>();
+    private String color = null;
+
 
 
     public void run () {
@@ -110,7 +112,7 @@ public class ChessClient {
                 case "login" -> login(params);
                 case  "quit" -> "quit";
                 case "create" -> create(params);
-                case "list" -> list(params);
+                case "list" -> list();
                 case "join" -> join(params);
                 case "spectate" -> spectate(params);
                 case "logout" -> logout();
@@ -218,12 +220,10 @@ public class ChessClient {
         throw new Exception("Invalid format: Expected GameName\n");
 
     }
-    private String list(String[] params) throws Exception {
+    private String list() throws Exception {
 
-        ListGamesRequest request = new ListGamesRequest();
-        ListGamesResponse response = server.listGames(request,authToken);
-        ArrayList<GameData> games = response.getGames();
-        gameNames.clear();
+        ArrayList<GameData> games = getGames();
+        ArrayList<String> gameNames = new ArrayList<>();
 
         for(GameData game :games){
             gameNames.add(game.gameName());
@@ -244,18 +244,47 @@ public class ChessClient {
 
     private String join(String[] params) throws Exception {
         if (params.length == 2) {
-            String gameID = params[0];
+
+            int gameID;
+            try {
+                gameID = Integer.parseInt(params[0]);
+            } catch (NumberFormatException e) {
+                throw new Exception("Invalid Game Id: Expected Number\n");
+            }
+
+
             String color = params[1];
-            color = color.toLowerCase(Locale.ROOT);
-            if (!color.equals("white") && !color.equals("black"))
-            {
+            color = color.toUpperCase(Locale.ROOT);
+            if (!color.equals("WHITE") && !color.equals("BLACK")) {
                 throw new Exception("Invalid color: Expected White or Black\n");
             }
+
+            ArrayList<GameData> games = getGames();
+
+            GameData game = games.get(gameID - 1);
+            currentGameID = String.valueOf((gameID - 1));
+            JoinGameRequest request = new JoinGameRequest();
+            request.setPlayerColor(color);
+            request.setGameID(game.gameID());
+            JoinGameResponse response = server.joinGame(request, authToken);
+            this.color = color;
+            ChessGame currentGame = game.game();
+            BoardDrawer drawer = new BoardDrawer(color);
+            drawer.drawBoard(currentGame.getBoard());
+
+
             return "hi join";
 
         }
         throw new Exception("Invalid format: Expected GameID Color\n");
     }
+
+    private  ArrayList<GameData> getGames() throws Exception {
+        ListGamesRequest request = new ListGamesRequest();
+        ListGamesResponse response = server.listGames(request,authToken);
+        return (response.getGames());
+    }
+
     private String spectate(String[] params) throws Exception {
         if (params.length == 1) {
             String gameID = params[0];
@@ -279,6 +308,7 @@ public class ChessClient {
         clientName = null;
         authToken = null;
         loggedIn = false;
+        currentGameID = null;
         return "Goodbye! \n";
     }
 }

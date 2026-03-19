@@ -38,7 +38,9 @@ public class ServerFacade {
         return (LogoutResponse) ClientCommunicator.delete(serverUrl,  "/session" ,request,LogoutResponse.class,token);
     }
 
-
+    public JoinGameResponse joinGame(JoinGameRequest request, String token) throws Exception {
+        return (JoinGameResponse) ClientCommunicator.put(serverUrl, "/game",request,JoinGameResponse.class,token);
+    }
 
 
 
