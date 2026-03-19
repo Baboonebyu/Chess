@@ -232,11 +232,26 @@ public class ChessClient {
         StringBuilder sb = new StringBuilder();
         int counter = 1;
 
-        for (String name: gameNames){
+        for (GameData game: games){
             sb.append(counter);
             counter+=1;
             sb.append(": ");
-            sb.append(name);
+            sb.append(game.gameName());
+            sb.append(" White player: ");
+            if(game.whiteUsername() == null){
+                sb.append("Open");
+            }
+            else{
+                sb.append(game.whiteUsername());
+            }
+            sb.append(", Black player: ");
+            if(game.blackUsername() == null){
+                sb.append("Open");
+            }
+            else{
+                sb.append(game.blackUsername());
+            }
+
             sb.append("\n");
         }
         return sb.toString();
@@ -260,9 +275,18 @@ public class ChessClient {
             }
 
             ArrayList<GameData> games = getGames();
-
+            if (gameID-1 > games.size()){
+                throw new Exception("Invalid Game ID \n");
+            }
             GameData game = games.get(gameID - 1);
             currentGameID = String.valueOf((gameID - 1));
+            if (color.equals("WHITE") && game.whiteUsername() != null){
+                throw new Exception("White is already taken. \n");
+            }
+            if (color.equals("BLACK") && game.blackUsername() != null){
+                throw new Exception("BLACK is already taken. \n");
+            }
+
             JoinGameRequest request = new JoinGameRequest();
             request.setPlayerColor(color);
             request.setGameID(game.gameID());
