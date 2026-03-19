@@ -1,10 +1,13 @@
 package client;
 
+import model.GameData;
 import model.Request;
 import model.Response;
 import org.junit.jupiter.api.*;
 import server.Server;
 import sharedServerFiles.ServerFacade;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,7 +28,7 @@ public class ServerFacadeTests {
     }
 
     @BeforeEach
-            public void clear() throws Exception
+            public void clearForTests() throws Exception
     {   facade.clearDatabase(new Request.ClearRequest());}
 
 
@@ -155,8 +158,59 @@ public class ServerFacadeTests {
     }
 
 
+    @Test
+    void joinGame()throws Exception{
+        Request.CreateGameRequest cRequest = new Request.CreateGameRequest();
+        cRequest.setGameName("TestGame");
+        String token = createUser("WhitePlayer","Password","Email");
+        facade.createGame(cRequest, token);
+
+        Request.JoinGameRequest request = new Request.JoinGameRequest();
+        request.setGameID("1");
+        request.setPlayerColor("WHITE");
+        facade.joinGame(request, token);
+        Response.ListGamesResponse lResponse = facade.listGames(new Request.ListGamesRequest(), token);
+
+        ArrayList<GameData> games = lResponse.getGames();
+        GameData game = games.getFirst();
+        assertEquals("WhitePlayer", game.whiteUsername());
+    }
+
+    @Test
+    void joinGameTakenColor()throws Exception{
+        Request.CreateGameRequest cRequest = new Request.CreateGameRequest();
+        cRequest.setGameName("TestGame");
+        String token = createUser("WhitePlayer","Password","Email");
+        facade.createGame(cRequest, token);
+
+        Request.JoinGameRequest request = new Request.JoinGameRequest();
+        request.setGameID("1");
+        request.setPlayerColor("WHITE");
+        facade.joinGame(request, token);
+
+        Request.JoinGameRequest request2 = new Request.JoinGameRequest();
+        request2.setGameID("1");
+        request2.setPlayerColor("WHITE");
+        String token2 = createUser("SecondPlayer","Password","Email");
+        assertThrows(Exception.class,()->   facade.joinGame(request2, token2));
 
 
+    }
+
+    @Test
+    void clear() throws Exception {
+        String token = createUser("User","Password","Email");
+
+        facade.clearDatabase(new Request.ClearRequest());
+
+        //listGames
+
+
+        Request.LoginRequest request = new Request.LoginRequest();
+        request.setUsername("User");
+        request.setPassword("Password");
+        assertThrows(Exception.class,()->facade.loginUser(request));
+    }
 
 
 
