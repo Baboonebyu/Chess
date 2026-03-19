@@ -18,10 +18,20 @@ public class ClientCommunicator {
     public static <T extends Response> Response post(String serverUrl, String path , Request request, Class<T> responseClass) throws Exception {
         HttpRequest httpRequest = requestBuilder("POST", serverUrl,path,request);
         var hResponse = sendRequest(httpRequest);
-        Response response = handleResponse(hResponse,responseClass);
 
-        return response;
+        return handleResponse(hResponse,responseClass);
     }
+
+    public static <T extends Response> Response delete(String serverUrl, String path , Request request, Class<T> responseClass) throws Exception {
+        HttpRequest httpRequest = requestBuilder("Delete", serverUrl,path,request);
+
+        var hResponse = sendRequest(httpRequest);
+
+        return handleResponse(hResponse,responseClass);
+    }
+
+
+
 
 
     private static HttpRequest requestBuilder(String method,String serverUrl, String path, Object body){
@@ -29,6 +39,11 @@ public class ClientCommunicator {
                 .uri(URI.create(serverUrl + path))
                 .timeout(java.time.Duration.ofMillis(TIMEOUT_MILLIS))
                 .method(method, makeRequestBody(body));
+        if(body.getClass()== Request.LogoutRequest.class)
+        {
+            String token = ((Request.LogoutRequest) body).getAuthToken();
+            hRequest.header("Authorization",token);
+        }
         if (body != null) {
             hRequest.setHeader("Content-Type", "application/json");
         }
@@ -57,6 +72,14 @@ public class ClientCommunicator {
         if (!isSuccessful(status)) {
             var body = response.body();
             if (body != null) {
+                if(status == 403){
+                    throw new Exception("This username is already taken");
+                } else if (status == 401) {
+                    throw new Exception("Bad password");
+                }
+                else if (status == 400) {
+                    throw new Exception("Something was wrong with your request");
+                }
                 throw new Exception("This one has a body" +status);
             }
 
@@ -73,6 +96,7 @@ public class ClientCommunicator {
     private static boolean isSuccessful(int status) {
         return status / 100 == 2;
     }
+
 
 
 }

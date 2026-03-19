@@ -1,7 +1,6 @@
 package sharedServerFiles;
 
 import model.Request.*;
-import model.Response;
 import model.Response.*;
 
 public class ServerFacade {
@@ -12,9 +11,9 @@ public class ServerFacade {
          serverUrl = url;
     }
 
-    public Response registerUser(RegisterRequest request) throws Exception {
+    public RegisterResponse registerUser(RegisterRequest request) throws Exception {
 
-        return ClientCommunicator.post(serverUrl,  "/user" ,request,RegisterResponse.class);
+        return (RegisterResponse) ClientCommunicator.post(serverUrl,  "/user" ,request,RegisterResponse.class);
     }
 
     public LoginResponse loginUser (LoginRequest request) throws Exception {
@@ -29,7 +28,9 @@ public class ServerFacade {
     public void createGame(String gameName){}
     public void listGames(){}
     public void spectateGame(String gameID){}
-    public void logoutUser(){}
+    public LogoutResponse logoutUser(LogoutRequest request) throws Exception {
+        return (LogoutResponse) ClientCommunicator.delete(serverUrl,  "/session" ,request,LogoutResponse.class);
+    }
 
 
 

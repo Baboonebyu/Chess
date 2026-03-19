@@ -6,6 +6,7 @@ import chess.ChessGame;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Scanner;
 
 import model.Request;
@@ -25,6 +26,8 @@ public class ChessClient {
     }
     private boolean loggedIn = false;
     private boolean inGame = false;
+    private String authToken = null;
+    private String clientName = null;
 
 
     public void run () {
@@ -91,9 +94,9 @@ public class ChessClient {
         out.print("\nCREATE <GameName> \n");
         out.print("LIST \n");
         out.print("JOIN <ID> [White|Black]\n");
-        out.print("Spectate <ID>\n");
+        out.print("SPECTATE <ID>\n");
         out.print("LOGOUT\n");
-        out.print("quit\n");
+        out.print("QUIT\n");
         out.print("HELP \n");
 
     }
@@ -155,8 +158,11 @@ public class ChessClient {
 
             LoginResponse response = server.loginUser(request);
 
+
+            clientName = response.getUsername();
+            authToken = response.getAuthToken();
             loggedIn = true;
-            return "hi " + params[0];
+            return "Welcome back  " + clientName +"\n";
 
         }
         throw new Exception("Invalid format: Expected username password\n");
@@ -178,10 +184,16 @@ public class ChessClient {
             request.setPassword(password);
             request.setEmail(email);
 
-            Response response = server.registerUser(request);
+            RegisterResponse response = server.registerUser(request);
 
+            if (response.getMessage() != null){
+                throw new Exception(response.getMessage());
+            }
+
+            clientName = response.getUsername();
+            authToken = response.getAuthToken();
             loggedIn = true;
-            return "hi " + params[0];
+            return "Welcome " + clientName+ "\n";
 
         }
         throw new Exception("Invalid format: Expected username password email\n");
@@ -225,9 +237,21 @@ public class ChessClient {
         }
         throw new Exception("Invalid format: Expected GameID\n");
     }
-    private String logout(){
+    private String logout() throws Exception {
+        Request.LogoutRequest request = new Request.LogoutRequest(authToken);
+
+
+        LogoutResponse response = server.logoutUser(request);
+        if (response.getMessage() != null){
+            throw new Exception(response.getMessage());
+        }
+
+
+
+        clientName = null;
+        authToken = null;
         loggedIn = false;
-        return "hi logout";
+        return "Goodbye! \n";
     }
 }
 
