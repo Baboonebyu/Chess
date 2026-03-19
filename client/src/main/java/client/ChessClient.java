@@ -30,6 +30,7 @@ public class ChessClient {
 
 
 
+
     public void run () {
         BoardDrawer drawer = new BoardDrawer("Black");
         ChessGame game = new ChessGame();
@@ -55,6 +56,9 @@ public class ChessClient {
             else if (!inGame){
                 printLoggedInMenu();
             }
+            else{
+                printGameMenu();
+            }
 
             //add menu3
 
@@ -74,6 +78,11 @@ public class ChessClient {
         }
         loggedIn = false;
         inGame = false;
+    }
+
+    private void printGameMenu() {
+        out.print("\nQUIT \n");
+        out.print("HELP \n");
     }
 
 
@@ -142,6 +151,9 @@ public class ChessClient {
             out.println("Logout - Logout and return to login menu");
             out.println("Quit - Exits the program");
             out.println("Display this message");
+        }
+        else{
+            out.println("More functions coming soon use quit to exit");
         }
 
 
@@ -295,9 +307,10 @@ public class ChessClient {
             ChessGame currentGame = game.game();
             BoardDrawer drawer = new BoardDrawer(color);
             drawer.drawBoard(currentGame.getBoard());
+            inGame = true;
 
 
-            return "hi join";
+            return "Joining "+ game.gameName()+ " game.";
 
         }
         throw new Exception("Invalid format: Expected GameID Color\n");
@@ -311,9 +324,29 @@ public class ChessClient {
 
     private String spectate(String[] params) throws Exception {
         if (params.length == 1) {
-            String gameID = params[0];
+            int gameID;
 
-            return "hi spectate";
+
+            try {
+                gameID = Integer.parseInt(params[0]);
+            } catch (NumberFormatException e) {
+                throw new Exception("Invalid Game Id: Expected Number\n");
+            }
+
+            ArrayList<GameData> games = getGames();
+            if (gameID-1 > games.size()){
+                throw new Exception("Invalid Game ID \n");
+            }
+            GameData game = games.get(gameID - 1);
+            currentGameID = String.valueOf((gameID - 1));
+            ChessGame currentGame = game.game();
+            BoardDrawer drawer = new BoardDrawer("WHITE");
+            drawer.drawBoard(currentGame.getBoard());
+
+
+
+
+            return "Spectating "+game.gameName()+" game.";
 
         }
         throw new Exception("Invalid format: Expected GameID\n");
