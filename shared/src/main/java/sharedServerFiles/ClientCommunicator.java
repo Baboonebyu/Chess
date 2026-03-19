@@ -15,15 +15,15 @@ public class ClientCommunicator {
     private static final int TIMEOUT_MILLIS = 5000;
     private static final HttpClient client = HttpClient.newHttpClient();
 
-    public static <T extends Response> Response post(String serverUrl, String path , Request request, Class<T> responseClass) throws Exception {
-        HttpRequest httpRequest = requestBuilder("POST", serverUrl,path,request);
+    public static <T extends Response> Response post(String serverUrl, String path , Request request, Class<T> responseClass,String token) throws Exception {
+        HttpRequest httpRequest = requestBuilder("POST", serverUrl,path,request,token);
         var hResponse = sendRequest(httpRequest);
 
         return handleResponse(hResponse,responseClass);
     }
 
-    public static <T extends Response> Response delete(String serverUrl, String path , Request request, Class<T> responseClass) throws Exception {
-        HttpRequest httpRequest = requestBuilder("Delete", serverUrl,path,request);
+    public static <T extends Response> Response delete(String serverUrl, String path , Request request, Class<T> responseClass,String token) throws Exception {
+        HttpRequest httpRequest = requestBuilder("Delete", serverUrl,path,request,token);
 
         var hResponse = sendRequest(httpRequest);
 
@@ -34,16 +34,21 @@ public class ClientCommunicator {
 
 
 
-    private static HttpRequest requestBuilder(String method,String serverUrl, String path, Object body){
+    private static HttpRequest requestBuilder(String method,String serverUrl, String path, Object body,String token){
+
         var hRequest = HttpRequest.newBuilder()
+
                 .uri(URI.create(serverUrl + path))
                 .timeout(java.time.Duration.ofMillis(TIMEOUT_MILLIS))
                 .method(method, makeRequestBody(body));
-        if(body.getClass()== Request.LogoutRequest.class)
+        if(token != null)
         {
-            String token = ((Request.LogoutRequest) body).getAuthToken();
             hRequest.header("Authorization",token);
         }
+
+
+
+
         if (body != null) {
             hRequest.setHeader("Content-Type", "application/json");
         }

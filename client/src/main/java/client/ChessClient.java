@@ -82,7 +82,7 @@ public class ChessClient {
     }
     private void printLoggedOutMenu(){
 
-        out.print("\nREGISTER <Username> <Password> <Email> \n");
+        out.print("REGISTER <Username> <Password> <Email> \n");
         out.print("LOGIN <Username> <Password> \n");
         out.print("QUIT \n");
         out.print("HELP \n");
@@ -202,16 +202,28 @@ public class ChessClient {
     }
 
     private String create(String[] params) throws Exception {
-        if (params.length == 1) {
-            String gameName = params[0];
+        if (params.length >= 1) {
+            String gameName = String.join(" ",params);
 
-            return "hi create";
+            CreateGameRequest request = new CreateGameRequest();
+            request.setGameName(gameName);
+            CreateGameResponse response = server.createGame(request,authToken);
+
+            if (response.getMessage() != null){
+                throw new Exception(response.getMessage());
+            }
+
+
+            return "Your game was created!\n";
 
         }
         throw new Exception("Invalid format: Expected GameName\n");
 
     }
     private String list(){
+
+
+
         return "hi list";
     }
     private String join(String[] params) throws Exception {
@@ -241,7 +253,7 @@ public class ChessClient {
         Request.LogoutRequest request = new Request.LogoutRequest(authToken);
 
 
-        LogoutResponse response = server.logoutUser(request);
+        LogoutResponse response = server.logoutUser(request,authToken);
         if (response.getMessage() != null){
             throw new Exception(response.getMessage());
         }

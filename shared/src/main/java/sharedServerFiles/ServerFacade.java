@@ -13,7 +13,7 @@ public class ServerFacade {
 
     public RegisterResponse registerUser(RegisterRequest request) throws Exception {
 
-        return (RegisterResponse) ClientCommunicator.post(serverUrl,  "/user" ,request,RegisterResponse.class);
+        return (RegisterResponse) ClientCommunicator.post(serverUrl,  "/user" ,request,RegisterResponse.class,null);
     }
 
     public LoginResponse loginUser (LoginRequest request) throws Exception {
@@ -23,13 +23,17 @@ public class ServerFacade {
 
 
 
-        return (LoginResponse) ClientCommunicator.post(serverUrl, "/session",request, LoginResponse.class);
+        return (LoginResponse) ClientCommunicator.post(serverUrl, "/session",request, LoginResponse.class,null);
     }
-    public void createGame(String gameName){}
+    public CreateGameResponse createGame(CreateGameRequest request,String token) throws Exception {
+        return (CreateGameResponse) ClientCommunicator.post(serverUrl, "/game",request,CreateGameResponse.class,token);
+
+
+    }
     public void listGames(){}
     public void spectateGame(String gameID){}
-    public LogoutResponse logoutUser(LogoutRequest request) throws Exception {
-        return (LogoutResponse) ClientCommunicator.delete(serverUrl,  "/session" ,request,LogoutResponse.class);
+    public LogoutResponse logoutUser(LogoutRequest request, String token) throws Exception {
+        return (LogoutResponse) ClientCommunicator.delete(serverUrl,  "/session" ,request,LogoutResponse.class,token);
     }
 
 
