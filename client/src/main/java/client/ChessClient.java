@@ -66,6 +66,7 @@ public class ChessClient {
             printPrompt();
             String line = scanner.nextLine();
             try {
+
                 result = eval(line);
                 out.print(result);
                 out.print(SET_TEXT_COLOR_GREEN);
@@ -236,6 +237,9 @@ public class ChessClient {
 
         ArrayList<GameData> games = getGames();
 
+        if(games.isEmpty()){
+            return "No games currently";
+        }
 
 
 
@@ -285,7 +289,7 @@ public class ChessClient {
             }
 
             ArrayList<GameData> games = getGames();
-            if (gameID-1 > games.size()){
+            if (gameID-1 > games.size() || gameID-1 <0){
                 throw new Exception("Invalid Game ID \n");
             }
             GameData game = games.get(gameID - 1);

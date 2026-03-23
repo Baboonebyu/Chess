@@ -101,14 +101,14 @@ public class ClientCommunicator {
             var body = response.body();
             if (body != null) {
                 if(status == 403){
-                    throw new Exception("This username is already taken");
+                    throw new Exception("This username is already taken\n");
                 } else if (status == 401) {
-                    throw new Exception("Bad password");
+                    throw new Exception("Bad password\n");
                 }
                 else if (status == 400) {
-                    throw new Exception("Something was wrong with your request");
+                    throw new Exception("Something was wrong with your request\n");
                 }
-                throw new Exception("This one has a body" +status);
+                throw new Exception("Somthing went wrong" +status);
             }
 
             throw new Exception(String.valueOf(status));
