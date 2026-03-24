@@ -84,6 +84,7 @@ public class ChessClient {
     private void printGameMenu() {
         out.print("\nQUIT \n");
         out.print("HELP \n");
+
     }
 
 

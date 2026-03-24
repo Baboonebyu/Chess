@@ -108,7 +108,7 @@ public class ClientCommunicator {
                 else if (status == 400) {
                     throw new Exception("Something was wrong with your request\n");
                 }
-                throw new Exception("Somthing went wrong" +status);
+                throw new Exception("Something went wrong" +status);
             }
 
             throw new Exception(String.valueOf(status));
