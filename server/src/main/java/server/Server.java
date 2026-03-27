@@ -1,15 +1,17 @@
 package server;
 
 import io.javalin.*;
+import websocket.WebSocketHandler;
 
 public class Server {
 
     private final Javalin javalin;
+    private final WebSocketHandler webSocketHandler;
 
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
-
+        webSocketHandler = new WebSocketHandler();
         // Register your endpoints and exception handlers here.
 
 
@@ -46,6 +48,11 @@ public class Server {
                 new CreateGameHandler());
         javalinServer.put("/game",
                 new JoinGameHandler());
+        javalinServer.ws("/ws", ws -> {
+                    ws.onConnect(webSocketHandler);
+                    ws.onMessage(webSocketHandler);
+                    ws.onClose(webSocketHandler);
+                });
         // Other routes here
     }
 

@@ -12,14 +12,18 @@ import model.Request.*;
 import model.Response.*;
 import static java.lang.System.out;
 import shared.server.files.ServerFacade;
+import ui.EscapeSequences;
+import websocket.messages.ServerMessage;
+
 import static ui.EscapeSequences.*;
 
 
-public class ChessClient {
+public class ChessClient implements NotificationHandler {
     private final ServerFacade server;
 
-    public ChessClient(String serverUrl) {
+    public ChessClient(String serverUrl) throws Exception {
         server = new ServerFacade(serverUrl);
+        WebSocketFacade ws = new WebSocketFacade(serverUrl,  this);
     }
     private boolean loggedIn = false;
     private boolean inGame = false;
@@ -38,6 +42,16 @@ public class ChessClient {
        // drawer.drawBoard(board);
         loopMain();
     }
+
+
+    @Override
+    public void notify(ServerMessage message) {
+
+        System.out.println( SET_TEXT_COLOR_RED + message.toString());
+        printPrompt();
+
+    }
+
 
 
 
@@ -81,12 +95,6 @@ public class ChessClient {
         inGame = false;
     }
 
-    private void printGameMenu() {
-        out.print("\nQUIT \n");
-        out.print("HELP \n");
-
-    }
-
 
     private void printPrompt() {
         out.print(SET_TEXT_COLOR_WHITE + ">>> " + SET_TEXT_COLOR_GREEN);
@@ -111,6 +119,15 @@ public class ChessClient {
         out.print("HELP \n");
 
     }
+    private void printGameMenu(){
+        out.print("Redraw \n");
+        out.print("Move <Current Location> <New location>\n");
+        out.print("Highlight <Piece Location> \n");
+        out.print("Leave\n");
+        out.print("Resign\n");
+        out.print("Help\n");
+
+    }
 
 
     public String eval(String input) {
@@ -127,6 +144,11 @@ public class ChessClient {
                 case "join" -> join(params);
                 case "spectate" -> spectate(params);
                 case "logout" -> logout();
+                case "redraw" -> redraw();
+        //        case "move" -> makeMove();
+         //       case "highlight" -> highlight();
+         //       case "leave" -> leave();
+          //      case "resign" -> resign();
 
 
                 default -> help();
@@ -135,6 +157,19 @@ public class ChessClient {
             out.print(SET_TEXT_COLOR_RED);
             return ex.getMessage();
         }
+    }
+
+    private String redraw() throws Exception {
+
+        if(!inGame){
+            throw new Exception("Invalid Command");
+        }
+
+        //todo add websocket to get board
+        ChessGame currentGame = new ChessGame();
+        BoardDrawer drawer = new BoardDrawer(color);
+        drawer.drawBoard(currentGame.getBoard());
+        return "";
     }
 
     private String help() {
@@ -155,7 +190,15 @@ public class ChessClient {
             out.println("Display this message");
         }
         else{
-            out.println("More functions coming soon use quit to exit");
+
+
+
+            out.println("Redraw displays the board again");
+            out.println("Move moves a piece. Example Move A2 A3");
+            out.println("Highlight Shows valid moves. Example A2");
+            out.println("Leave makes you leave game");
+            out.println("Resign has you forfeit");
+            out.println("Help displays this message");
         }
 
 
@@ -313,7 +356,7 @@ public class ChessClient {
             inGame = true;
 
 
-            return "Joining "+ game.gameName()+ " game.";
+            return "Joining "+ game.gameName()+ " game.\n";
 
         }
         throw new Exception("Invalid format: Expected GameID Color\n");
@@ -371,6 +414,7 @@ public class ChessClient {
         currentGameID = null;
         return "Goodbye! \n";
     }
+
 }
 
 
