@@ -39,9 +39,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         userService.verify(authToken);
         connections.add(session,command.getGameID());
         String username = command.getUserName();
-        String returnString = username+" has joined the game";
+        String returnString = username+" has joined the game.";
         ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,returnString);
-        connections.broadcast(session,message);
+        connections.broadcast(session,message, command.getGameID());
     }
 
 

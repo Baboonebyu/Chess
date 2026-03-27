@@ -48,7 +48,7 @@ public class ChessClient implements NotificationHandler {
     @Override
     public void notify(ServerMessage message) {
 
-        System.out.println( SET_TEXT_COLOR_RED + message.toString());
+        System.out.println( SET_TEXT_COLOR_WHITE + message.getMessage());
         printPrompt();
 
     }
