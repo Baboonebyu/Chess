@@ -15,7 +15,11 @@ public class ServerMessage {
     ServerMessageType serverMessageType;
     String message;
     String game;
+    String errorMessage;
 
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
     public enum ServerMessageType {
         LOAD_GAME,
