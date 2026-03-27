@@ -6,6 +6,7 @@ import chess.ChessGame;
 
 import java.util.*;
 
+import com.google.gson.Gson;
 import model.GameData;
 import model.Request;
 import model.Request.*;
@@ -32,6 +33,7 @@ public class ChessClient implements NotificationHandler {
     private String authToken = null;
     private String clientName = null;
     private String color = null;
+    private ChessGame game = null;
 
 
 
@@ -48,8 +50,22 @@ public class ChessClient implements NotificationHandler {
     @Override
     public void notify(ServerMessage message) {
 
-        System.out.println( SET_TEXT_COLOR_WHITE + message.getMessage());
-        printPrompt();
+
+        if (message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            System.out.println( SET_TEXT_COLOR_WHITE + message.getMessage());
+
+        } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
+            System.out.println(SET_TEXT_COLOR_RED+ "Error from server");
+        } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+            Gson gson = new Gson();
+            game = gson.fromJson(message.getGame(),ChessGame.class);
+
+
+        } else{
+            System.out.println(message.getServerMessageType());
+        }
+
+
 
     }
 
@@ -167,9 +183,8 @@ public class ChessClient implements NotificationHandler {
         }
 
         //todo add websocket to get board
-        ChessGame currentGame = new ChessGame();
         BoardDrawer drawer = new BoardDrawer(color);
-        drawer.drawBoard(currentGame.getBoard());
+        drawer.drawBoard(game.getBoard());
         return "";
     }
 
@@ -337,12 +352,12 @@ public class ChessClient implements NotificationHandler {
             if (gameID-1 > games.size() || gameID-1 <0){
                 throw new Exception("Invalid Game ID \n");
             }
-            GameData game = games.get(gameID - 1);
+            GameData gameJ = games.get(gameID - 1);
             currentGameID = String.valueOf((gameID - 1));
-            if (color.equals("WHITE") && game.whiteUsername() != null){
+            if (color.equals("WHITE") && gameJ.whiteUsername() != null){
                 throw new Exception("White is already taken. \n");
             }
-            if (color.equals("BLACK") && game.blackUsername() != null){
+            if (color.equals("BLACK") && gameJ.blackUsername() != null){
                 throw new Exception("BLACK is already taken. \n");
             }
 
@@ -353,12 +368,12 @@ public class ChessClient implements NotificationHandler {
 
             JoinGameRequest request = new JoinGameRequest();
             request.setPlayerColor(color);
-            request.setGameID(game.gameID());
+            request.setGameID(gameJ.gameID());
             JoinGameResponse response = server.joinGame(request, authToken);
             this.color = color;
-            ChessGame currentGame = game.game();
+            game = gameJ.game();
             BoardDrawer drawer = new BoardDrawer(color);
-            drawer.drawBoard(currentGame.getBoard());
+            drawer.drawBoard(game.getBoard());
             inGame = true;
 
 
@@ -366,7 +381,7 @@ public class ChessClient implements NotificationHandler {
 
 
 
-            return "Joining "+ game.gameName()+ " game.\n";
+            return "Joining "+ gameJ.gameName()+ " game.\n";
 
         }
         throw new Exception("Invalid format: Expected GameID Color\n");

@@ -25,8 +25,10 @@ public class ConnectionManager {
         connections.put(gameId, sessions);
     }
 
-    public void remove(Session session, Integer gameID) {
-        connections.remove(gameID,session);
+    public void remove(Session session, Integer gameId) {
+        ArrayList<Session> sessions = connections.get(gameId);
+        sessions.remove(session);
+        connections.put(gameId, sessions);
     }
 
     public void broadcast(Session excludeSession, ServerMessage message, Integer gameId) throws IOException {

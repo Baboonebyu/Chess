@@ -16,6 +16,8 @@ import websocket.messages.ServerMessage;
 import websocket.commands.UserGameCommand;
 import websocket.commands.UserGameCommand.*;
 import java.io.IOException;
+import java.util.Objects;
+
 import static server.Handler.gameDAO;
 import com.google.gson.Gson;
 
@@ -36,11 +38,31 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             switch (command.getCommandType()) {
                 case CONNECT -> Connect(command, ctx.session);
-//                case EXIT -> exit(action.visitorName(), ctx.session);
+                case LEAVE -> Leave(command, ctx.session);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void Leave(UserGameCommand command, Session session) throws IOException, DataAccessException {
+
+        String username = command.getUserName();
+        String returnString = username+" has left the game.";
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        message.setMessage(returnString);
+
+        String stringGameId = String.valueOf(command.getGameID());
+        GameData game = gameDAO.getGame(String.valueOf(stringGameId));
+        if (Objects.equals(game.whiteUsername(), username)){
+            gameDAO.updateGame(stringGameId,null,game.blackUsername(),game.gameName(),game.game());
+        }
+        else if (Objects.equals(game.blackUsername(), username)){
+            gameDAO.updateGame(stringGameId,game.whiteUsername(),null,game.gameName(),game.game());
+        }
+
+        connections.remove(session,command.getGameID());
+        connections.broadcast(session,message, command.getGameID());
     }
 
     private void Connect(UserGameCommand command, Session session) throws DataAccessException, IOException {
