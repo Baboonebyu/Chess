@@ -20,10 +20,11 @@ import static ui.EscapeSequences.*;
 
 public class ChessClient implements NotificationHandler {
     private final ServerFacade server;
+    private final WebSocketFacade ws;
 
     public ChessClient(String serverUrl) throws Exception {
         server = new ServerFacade(serverUrl);
-        WebSocketFacade ws = new WebSocketFacade(serverUrl,  this);
+        ws = new WebSocketFacade(serverUrl, this);
     }
     private boolean loggedIn = false;
     private boolean inGame = false;
@@ -345,6 +346,11 @@ public class ChessClient implements NotificationHandler {
                 throw new Exception("BLACK is already taken. \n");
             }
 
+            try { ws.connect(authToken, Integer.valueOf(currentGameID), clientName);}catch (Exception e){
+                throw new Exception("Error connecting to the game");
+            }
+
+
             JoinGameRequest request = new JoinGameRequest();
             request.setPlayerColor(color);
             request.setGameID(game.gameID());
@@ -354,6 +360,10 @@ public class ChessClient implements NotificationHandler {
             BoardDrawer drawer = new BoardDrawer(color);
             drawer.drawBoard(currentGame.getBoard());
             inGame = true;
+
+
+
+
 
 
             return "Joining "+ game.gameName()+ " game.\n";

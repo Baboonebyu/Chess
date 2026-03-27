@@ -9,15 +9,15 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<Session, Session> connections = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<Integer, Session> connections = new ConcurrentHashMap<>();
 
 
-    public void add(Session session) {
-        connections.put(session, session);
+    public void add(Session session, Integer gameId) {
+        connections.put(gameId, session);
     }
 
-    public void remove(Session session) {
-        connections.remove(session);
+    public void remove(Session session, Integer gameID) {
+        connections.remove(gameID,session);
     }
 
     public void broadcast(Session excludeSession, ServerMessage message) throws IOException {

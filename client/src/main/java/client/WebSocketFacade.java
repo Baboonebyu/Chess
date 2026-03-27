@@ -2,6 +2,7 @@ package client;
 
 import com.google.gson.Gson;
 import jakarta.websocket.*;
+import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -34,24 +35,25 @@ public class WebSocketFacade extends Endpoint {
             throw new Exception( ex.getMessage());
         }
 
-
-
-
-
-
     }
-
-
-
-
-
-
 
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
         int count =0;
         count=count+1;
+
+
+    }
+    public void connect(String authToken, Integer gameID,String userName) throws Exception {
+
+        try {
+            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT,authToken,gameID,userName);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+        }
+        catch (IOException e){
+            throw new Exception();
+        }
 
 
     }
