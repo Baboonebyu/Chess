@@ -62,6 +62,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
 
         connections.remove(session,command.getGameID());
+        GameData changed = gameDAO.getGame(String.valueOf(stringGameId));
         connections.broadcast(session,message, command.getGameID());
     }
 

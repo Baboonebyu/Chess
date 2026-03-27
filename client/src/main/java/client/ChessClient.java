@@ -164,7 +164,7 @@ public class ChessClient implements NotificationHandler {
                 case "redraw" -> redraw();
         //        case "move" -> makeMove();
          //       case "highlight" -> highlight();
-         //       case "leave" -> leave();
+                case "leave" -> leave();
           //      case "resign" -> resign();
 
 
@@ -176,13 +176,26 @@ public class ChessClient implements NotificationHandler {
         }
     }
 
+    private  String leave() throws Exception {
+        if(!inGame){
+            throw new Exception("Invalid Command");
+        }
+
+        ws.Leave(authToken,Integer.valueOf(currentGameID),clientName);
+
+
+        inGame = false;
+        return "You have left the game";
+
+    }
+
     private String redraw() throws Exception {
 
         if(!inGame){
             throw new Exception("Invalid Command");
         }
 
-        //todo add websocket to get board
+
         BoardDrawer drawer = new BoardDrawer(color);
         drawer.drawBoard(game.getBoard());
         return "";
@@ -353,7 +366,7 @@ public class ChessClient implements NotificationHandler {
                 throw new Exception("Invalid Game ID \n");
             }
             GameData gameJ = games.get(gameID - 1);
-            currentGameID = String.valueOf((gameID - 1));
+            currentGameID = String.valueOf((gameID));
             if (color.equals("WHITE") && gameJ.whiteUsername() != null){
                 throw new Exception("White is already taken. \n");
             }
@@ -409,7 +422,7 @@ public class ChessClient implements NotificationHandler {
                 throw new Exception("Invalid Game ID \n");
             }
             GameData game = games.get(gameID - 1);
-            currentGameID = String.valueOf((gameID - 1));
+            currentGameID = String.valueOf((gameID));
             ChessGame currentGame = game.game();
             BoardDrawer drawer = new BoardDrawer("WHITE");
             drawer.drawBoard(currentGame.getBoard());
