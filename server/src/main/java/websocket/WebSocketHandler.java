@@ -79,8 +79,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
 
-        System.out.println("bob");
-        System.out.println(game.getBoard());
+
+   //     System.out.println(game.getBoard());
 
 
 
@@ -92,6 +92,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
             gameDAO.updateGame(stringGameId,gameData.whiteUsername(),gameData.blackUsername(),gameData.gameName(),game, false);
 
+            System.out.println(gameDAO.getGame(stringGameId).game().getBoard());
             if(game.isInCheckmate(ChessGame.TeamColor.WHITE)){
                 checkMateHandler(gameData.whiteUsername(),command.getGameID());
             } else if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
@@ -118,7 +119,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
             Gson gson = new Gson();
-            String returnGame= gson.toJson(gameDAO.getGame(stringGameId));
+            String returnGame= gson.toJson(gameDAO.getGame(stringGameId).game());
 
             ServerMessage gameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
             gameMessage.setGame(returnGame);

@@ -49,7 +49,7 @@ public class ChessClient implements NotificationHandler {
 
 
     @Override
-    public void notify(ServerMessage message) {
+    public void notify(ServerMessage message)  {
 
 
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
@@ -60,6 +60,9 @@ public class ChessClient implements NotificationHandler {
         } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
             Gson gson = new Gson();
             game = gson.fromJson(message.getGame(),ChessGame.class);
+
+            BoardDrawer drawer = new BoardDrawer(color);
+            drawer.drawBoard(game.getBoard());
 
 
         } else{
@@ -457,7 +460,7 @@ public class ChessClient implements NotificationHandler {
             this.color = color;
             game = gameJ.game();
             BoardDrawer drawer = new BoardDrawer(color);
-            drawer.drawBoard(game.getBoard());
+ //           drawer.drawBoard(game.getBoard());
             inGame = true;
 
 
