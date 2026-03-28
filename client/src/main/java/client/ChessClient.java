@@ -203,8 +203,8 @@ public class ChessClient implements NotificationHandler {
         if (tokens.length == 1){
             if(Objects.equals(tokens[0], "yes")){
                 ws.resign(authToken,Integer.valueOf(currentGameID),clientName);
-
-                return "You have resigned\n";
+                return "";
+               // return "You have resigned\n";
             }
         }
         return "You are still in the game\n";
