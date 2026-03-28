@@ -1,10 +1,8 @@
 package websocket;
 
-import chess.ChessBoard;
 import com.google.gson.Gson;
 
 import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
 import io.javalin.websocket.*;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
@@ -14,14 +12,15 @@ import service.UnauthorisedException;
 import service.UserService;
 import websocket.messages.ServerMessage;
 import websocket.commands.UserGameCommand;
-import websocket.commands.UserGameCommand.*;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static server.Handler.gameDAO;
-import com.google.gson.Gson;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
+
 
     private final ConnectionManager connections = new ConnectionManager();
     UserService userService = new UserService();
@@ -39,11 +38,24 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             switch (command.getCommandType()) {
                 case CONNECT -> Connect(command, ctx.session);
                 case LEAVE -> Leave(command, ctx.session);
+                case RESIGN -> Resign(command, ctx.session);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
+
+    private void Resign(UserGameCommand command, Session session) throws IOException, DataAccessException {
+        String username = command.getUserName();
+        String returnString = username+" has resigned.\n The game is over.";
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        message.setMessage(returnString);
+        connections.broadcast(null,message, command.getGameID());
+        String stringGameId = String.valueOf(command.getGameID());
+        GameData game = gameDAO.getGame(stringGameId);
+        gameDAO.updateGame(stringGameId,game.whiteUsername(),game.blackUsername(),game.gameName(),game.game(),true);
+    }
+
 
     private void Leave(UserGameCommand command, Session session) throws IOException, DataAccessException {
 
@@ -55,10 +67,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         String stringGameId = String.valueOf(command.getGameID());
         GameData game = gameDAO.getGame(String.valueOf(stringGameId));
         if (Objects.equals(game.whiteUsername(), username)){
-            gameDAO.updateGame(stringGameId,null,game.blackUsername(),game.gameName(),game.game());
+            gameDAO.updateGame(stringGameId,null,game.blackUsername(),game.gameName(),game.game(),game.isOver());
         }
         else if (Objects.equals(game.blackUsername(), username)){
-            gameDAO.updateGame(stringGameId,game.whiteUsername(),null,game.gameName(),game.game());
+            gameDAO.updateGame(stringGameId,game.whiteUsername(),null,game.gameName(),game.game(),game.isOver());
         }
 
         connections.remove(session,command.getGameID());
@@ -82,8 +94,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 session.getRemote().sendString(msg);
                 return;
             }
-
-
 
 
 

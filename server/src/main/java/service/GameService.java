@@ -48,9 +48,9 @@ public class GameService {
         }
 
         if (Objects.equals(playerColor, "WHITE") && game.whiteUsername() == null) {
-            gameDAO.updateGame(gameID, userName, game.blackUsername(), game.gameName(), game.game());
+            gameDAO.updateGame(gameID, userName, game.blackUsername(), game.gameName(), game.game(), game.isOver());
         } else if (Objects.equals(playerColor, "BLACK") && game.blackUsername() == null) {
-            gameDAO.updateGame(gameID, game.whiteUsername(), userName, game.gameName(), game.game());
+            gameDAO.updateGame(gameID, game.whiteUsername(), userName, game.gameName(), game.game(), game.isOver());
         } else {
             throw new AlreadyTakenException("Error: already taken");
         }
