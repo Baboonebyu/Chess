@@ -148,7 +148,7 @@ public class ChessClient implements NotificationHandler {
     }
     private void printGameMenu(){
         out.print("Redraw \n");
-        out.print("Move <Current Location> <New location>\n");
+        out.print("Move <Current Location> <New location> <PromotionType>\n");
         out.print("Highlight <Piece Location> \n");
         out.print("Leave\n");
         out.print("Resign\n");
@@ -172,7 +172,7 @@ public class ChessClient implements NotificationHandler {
                 case "spectate" -> spectate(params);
                 case "logout" -> logout();
                 case "redraw" -> redraw();
-        //        case "move" -> makeMove();
+                case "move" -> makeMove(params);
          //       case "highlight" -> highlight();
                 case "leave" -> leave();
                 case "resign" -> resign();
@@ -184,6 +184,32 @@ public class ChessClient implements NotificationHandler {
             out.print(SET_TEXT_COLOR_RED);
             return ex.getMessage();
         }
+    }
+
+    private String makeMove(String[] params) throws Exception {
+        if(!inGame){
+            throw new Exception("Invalid Command");
+        }
+        if (params.length >=2 ) {
+            String currentCords = params[0];
+            String newCords= params[1];
+            String promote = "none";
+            if (params.length >2){
+              promote = params[2];
+            }
+
+            ws.Move(authToken,Integer.valueOf(currentGameID),clientName,currentCords,newCords,promote);
+
+
+
+
+            return "";
+
+        }
+        throw new Exception("Invalid format: Expected CurrentPosition NewPosition\n");
+
+
+
     }
 
     private String resign() throws Exception {

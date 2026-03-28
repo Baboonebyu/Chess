@@ -192,7 +192,7 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if(!isInCheck(teamColor)){
-            System.out.println("not in check - checkmate function");
+       //     System.out.println("not in check - checkmate function");
             return false;
         }
 

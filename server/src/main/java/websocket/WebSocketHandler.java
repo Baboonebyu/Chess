@@ -1,5 +1,8 @@
 package websocket;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 
 import dataaccess.DataAccessException;
@@ -39,6 +42,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case CONNECT -> Connect(command, ctx.session);
                 case LEAVE -> Leave(command, ctx.session);
                 case RESIGN -> Resign(command, ctx.session);
+                case MAKE_MOVE -> Move(command,ctx.session);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -55,6 +59,120 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         GameData game = gameDAO.getGame(stringGameId);
         gameDAO.updateGame(stringGameId,game.whiteUsername(),game.blackUsername(),game.gameName(),game.game(),true);
     }
+
+
+    private void Move(UserGameCommand command, Session session) throws DataAccessException, IOException {
+        String stringGameId = String.valueOf(command.getGameID());
+        String userName = command.getUserName();
+        ChessMove move = command.getMove();
+        model.GameData gameData = gameDAO.getGame(stringGameId);
+        ChessGame game = gameData.game();
+
+        if (gameData.isOver()){
+            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            errorMessage.setErrorMessage("Error Game over");
+            String msg = errorMessage.toString();
+
+            session.getRemote().sendString(msg);
+            return;
+        }
+
+
+
+        System.out.println("bob");
+        System.out.println(game.getBoard());
+
+
+
+        try {
+
+            System.out.println(move);
+
+            game.makeMove(move);
+
+            gameDAO.updateGame(stringGameId,gameData.whiteUsername(),gameData.blackUsername(),gameData.gameName(),game, false);
+
+            if(game.isInCheckmate(ChessGame.TeamColor.WHITE)){
+                checkMateHandler(gameData.whiteUsername(),command.getGameID());
+            } else if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+                checkMateHandler(gameData.blackUsername(),command.getGameID());
+            }
+            else if(game.isInStalemate(ChessGame.TeamColor.WHITE)){
+                staleMateHandler(gameData.whiteUsername(),command.getGameID());
+            } else if (game.isInStalemate(ChessGame.TeamColor.BLACK)) {
+                staleMateHandler(gameData.blackUsername(),command.getGameID());
+            }
+            else if(game.isInCheck(ChessGame.TeamColor.WHITE)){
+                checkMessage(gameData.whiteUsername(),command.getGameID());
+            } else if (game.isInCheck(ChessGame.TeamColor.BLACK)) {
+                checkMessage(gameData.blackUsername(),command.getGameID());
+            }
+
+
+            String returnString = userName+" moved "+move.getStartPosition().getRow()+ "," +move.getStartPosition().getColumn()+
+                    " to" + move.getEndPosition().getRow()+","+ move.getEndPosition().getColumn();
+            ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+            message.setMessage(returnString);
+            connections.broadcast(session,message, command.getGameID());
+
+
+
+            Gson gson = new Gson();
+            String returnGame= gson.toJson(gameDAO.getGame(stringGameId));
+
+            ServerMessage gameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+            gameMessage.setGame(returnGame);
+
+            connections.broadcast(null,gameMessage, command.getGameID());
+
+
+
+        }
+        catch (chess.InvalidMoveException e){
+            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            errorMessage.setErrorMessage("Error Invalid move");
+            String msg = errorMessage.toString();
+
+            session.getRemote().sendString(msg);
+
+        }
+
+        }
+
+    private void staleMateHandler(String s, Integer gameID) throws DataAccessException, IOException {
+        String stringGameId = String.valueOf(gameID);
+        GameData game = gameDAO.getGame(stringGameId);
+        gameDAO.updateGame(stringGameId,game.whiteUsername(),game.blackUsername(),game.gameName(),game.game(),true);
+
+        String returnString = "Stalemate\n GameOver!";
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        message.setMessage(returnString);
+        connections.broadcast(null,message, gameID);
+
+    }
+
+    private void checkMessage(String userName, Integer gameID) throws IOException {
+
+        String returnString = userName+" is in Check";
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        message.setMessage(returnString);
+        connections.broadcast(null,message, gameID);
+
+    }
+
+    private void checkMateHandler(String userName, Integer gameID) throws IOException, DataAccessException {
+        String stringGameId = String.valueOf(gameID);
+        GameData game = gameDAO.getGame(stringGameId);
+        gameDAO.updateGame(stringGameId,game.whiteUsername(),game.blackUsername(),game.gameName(),game.game(),true);
+
+        String returnString = userName+" is in Check\n GameOver!";
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        message.setMessage(returnString);
+        connections.broadcast(null,message, gameID);
+
+    }
+
+
 
 
     private void Leave(UserGameCommand command, Session session) throws IOException, DataAccessException {
