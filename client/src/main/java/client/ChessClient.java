@@ -34,6 +34,7 @@ public class ChessClient implements NotificationHandler {
     private String clientName = null;
     private String color = null;
     private ChessGame game = null;
+    private boolean spectating = false;
 
 
 
@@ -84,14 +85,16 @@ public class ChessClient implements NotificationHandler {
             out.print(ERASE_SCREEN);
             if (!loggedIn){
                 printLoggedOutMenu();}
-            else if (!inGame){
+            else if (spectating) {
+                printSpectatingMenu();
+            } else if (!inGame){
                 printLoggedInMenu();
-            }
-            else{
+
+            } else{
                 printGameMenu();
             }
 
-            //add menu3
+
 
 
             printPrompt();
@@ -110,6 +113,13 @@ public class ChessClient implements NotificationHandler {
         }
         loggedIn = false;
         inGame = false;
+    }
+
+    private void printSpectatingMenu() {
+        out.print("\nRedraw \n");
+        out.print("Highlight <Piece Location> \n");
+        out.print("Leave\n");
+        out.print("Help\n");
     }
 
 
@@ -165,7 +175,7 @@ public class ChessClient implements NotificationHandler {
         //        case "move" -> makeMove();
          //       case "highlight" -> highlight();
                 case "leave" -> leave();
-          //      case "resign" -> resign();
+                case "resign" -> resign();
 
 
                 default -> help();
@@ -176,6 +186,37 @@ public class ChessClient implements NotificationHandler {
         }
     }
 
+    private String resign() throws Exception {
+        if(!inGame){
+            throw new Exception("Invalid Command");
+        }
+
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+
+
+
+        out.print("Are you Sure Yes/No\n");
+        printPrompt();
+        String input = scanner.nextLine();
+        String[] tokens = input.toLowerCase().split(" ");
+        if (tokens.length == 1){
+            if(Objects.equals(tokens[0], "yes")){
+                ws.resign(authToken,Integer.valueOf(currentGameID),clientName);
+
+                return "You have resigned\n";
+            }
+        }
+        return "You are still in the game\n";
+
+
+
+
+
+
+
+    }
+
     private  String leave() throws Exception {
         if(!inGame){
             throw new Exception("Invalid Command");
@@ -183,7 +224,7 @@ public class ChessClient implements NotificationHandler {
 
         ws.Leave(authToken,Integer.valueOf(currentGameID),clientName);
 
-
+        spectating = false;
         inGame = false;
         return "You have left the game";
 
@@ -206,8 +247,12 @@ public class ChessClient implements NotificationHandler {
            out.print("To login or register please enter the command word \n");
            out.print("Followed by the necessary arguments as found in the <>\n");
            out.print("Example >>> Login Bob password\n");
-        }
-        else if (!inGame){
+        } else if (spectating) {
+            out.println("Redraw displays the board again");
+            out.println("Highlight Shows valid moves. Example A2");
+            out.println("Leave makes you leave game");
+            out.println("Help displays this message");
+        } else if (!inGame){
             out.print("Please enter a command word \n");
             out.print("Followed by the necessary arguments as found in the <>\n");
             out.print("Create - Makes a new game\n");
@@ -421,13 +466,18 @@ public class ChessClient implements NotificationHandler {
             if (gameID-1 > games.size()){
                 throw new Exception("Invalid Game ID \n");
             }
+            currentGameID = String.valueOf((gameID));
+            try { ws.connect(authToken, Integer.valueOf(currentGameID), clientName);}catch (Exception e){
+                throw new Exception("Error connecting to the game");
+            }
+
             GameData game = games.get(gameID - 1);
             currentGameID = String.valueOf((gameID));
             ChessGame currentGame = game.game();
             BoardDrawer drawer = new BoardDrawer("WHITE");
             drawer.drawBoard(currentGame.getBoard());
 
-
+            spectating = true;
 
 
             return "Spectating "+game.gameName()+" game.";
@@ -445,7 +495,7 @@ public class ChessClient implements NotificationHandler {
         }
 
 
-
+        spectating = false;
         clientName = null;
         authToken = null;
         loggedIn = false;
