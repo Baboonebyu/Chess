@@ -60,6 +60,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         String stringGameId = String.valueOf(command.getGameID());
         GameData game = gameDAO.getGame(stringGameId);
         gameDAO.updateGame(stringGameId,game.whiteUsername(),game.blackUsername(),game.gameName(),game.game(),true);
+        game = gameDAO.getGame(stringGameId);
     }
 
 
@@ -67,8 +68,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         String stringGameId = String.valueOf(command.getGameID());
 
         ChessMove move = command.getMove();
-        model.GameData gameData = gameDAO.getGame(stringGameId);
-        ChessGame game = gameData.game();
+
         AuthData authData= authDAO.getAuth(command.getAuthToken());
 
         if(authData == null)
@@ -83,6 +83,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         assert authData != null;
         String userName= authData.username();
 
+        model.GameData gameData = gameDAO.getGame(stringGameId);
+        ChessGame game = gameData.game();
 
         if (gameData.isOver()){
             ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
