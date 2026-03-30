@@ -2,7 +2,6 @@ package websocket;
 
 import chess.ChessGame;
 import chess.ChessMove;
-import chess.InvalidMoveException;
 import com.google.gson.Gson;
 
 import dataaccess.DataAccessException;
@@ -10,7 +9,6 @@ import io.javalin.websocket.*;
 import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
-import server.Handler;
 import service.GameService;
 import service.UnauthorisedException;
 import service.UserService;
@@ -18,7 +16,6 @@ import websocket.messages.ServerMessage;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Objects;
 
 import static server.Handler.authDAO;
@@ -41,17 +38,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         try {
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             switch (command.getCommandType()) {
-                case CONNECT -> Connect(command, ctx.session);
-                case LEAVE -> Leave(command, ctx.session);
-                case RESIGN -> Resign(command, ctx.session);
-                case MAKE_MOVE -> Move(command,ctx.session);
+                case CONNECT -> connect(command, ctx.session);
+                case LEAVE -> leave(command, ctx.session);
+                case RESIGN -> resign(command, ctx.session);
+                case MAKE_MOVE -> move(command,ctx.session);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private void Resign(UserGameCommand command, Session session) throws IOException, DataAccessException {
+    private void resign(UserGameCommand command, Session session) throws IOException, DataAccessException {
         String username = getUserName(session,authDAO.getAuth(command.getAuthToken()));
         String stringGameId = String.valueOf(command.getGameID());
         GameData game = gameDAO.getGame(stringGameId);
@@ -89,7 +86,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
 
-    private void Move(UserGameCommand command, Session session) throws DataAccessException, IOException {
+    private void move(UserGameCommand command, Session session) throws DataAccessException, IOException {
         String stringGameId = String.valueOf(command.getGameID());
 
         ChessMove move = command.getMove();
@@ -113,19 +110,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
         if(game.getTeamTurn() == ChessGame.TeamColor.WHITE && !Objects.equals(userName, gameData.whiteUsername())){
-            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-            errorMessage.setErrorMessage("Error Not valid move");
-            String msg = errorMessage.toString();
-
-            session.getRemote().sendString(msg);
+            sendError(session, "Error Not valid move");
             return;
 
         } else if (game.getTeamTurn() == ChessGame.TeamColor.BLACK && !Objects.equals(userName, gameData.blackUsername())) {
-            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-            errorMessage.setErrorMessage("Error Not valid move");
-            String msg = errorMessage.toString();
-
-            session.getRemote().sendString(msg);
+            sendError(session, "Error Not valid move");
             return;
         }
 
@@ -190,14 +179,19 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         }
 
+    private static void sendError(Session session, String error) throws IOException {
+        ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+        errorMessage.setErrorMessage(error);
+        String msg = errorMessage.toString();
+
+        session.getRemote().sendString(msg);
+
+    }
+
     private static String getUserName(Session session, AuthData authData) throws IOException {
         if(authData == null)
         {
-            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-            errorMessage.setErrorMessage("Error Unauthorized");
-            String msg = errorMessage.toString();
-
-            session.getRemote().sendString(msg);
+            sendError(session,"Error Unauthorized");
 
         }
         assert authData != null;
@@ -241,7 +235,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
 
-    private void Leave(UserGameCommand command, Session session) throws IOException, DataAccessException {
+    private void leave(UserGameCommand command, Session session) throws IOException, DataAccessException {
 
         String username = getUserName(session,authDAO.getAuth(command.getAuthToken()));
         String returnString = username+" has left the game.";
@@ -262,7 +256,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connections.broadcast(session,message, command.getGameID());
     }
 
-    private void Connect(UserGameCommand command, Session session) throws DataAccessException, IOException {
+    private void connect(UserGameCommand command, Session session) throws DataAccessException, IOException {
         String authToken = command.getAuthToken();
         String stringGameId = String.valueOf(command.getGameID());
 
@@ -271,11 +265,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
             if (gameDAO.getGame(stringGameId) == null){
-                ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-                errorMessage.setErrorMessage("Error Bad game ID");
-                String msg = errorMessage.toString();
-
-                session.getRemote().sendString(msg);
+                sendError(session,"Error Bad game ID");
                 return;
             }
 
@@ -303,11 +293,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         }
         catch (UnauthorisedException e){
-            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-            errorMessage.setErrorMessage("Error Unauthorized");
-            String msg = errorMessage.toString();
-
-            session.getRemote().sendString(msg);
+            sendError(session,"Error Unauthorized");
 
         }
     }
@@ -317,11 +303,4 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void handleClose(WsCloseContext ctx) {
         System.out.println("Websocket closed");
     }
-
-
-
-
-
-
-   //TODO add methods here
 }

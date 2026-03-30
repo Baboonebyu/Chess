@@ -128,7 +128,8 @@ public class SQLGameDataAccess implements GameDAO {
     }
 
     @Override
-    public void updateGame(String gameID, String whiteUsername, String blackUsername, String gameName, ChessGame data, boolean isOver) throws DataAccessException {
+    public void updateGame(String gameID, String whiteUsername, String blackUsername, String gameName, ChessGame data, boolean isOver)
+            throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             PreparedStatement ps = conn.prepareStatement("UPDATE games SET json=?,whiteUsername=?,blackUserName=?,isOver=? WHERE id=?");
             String json = new Gson().toJson(data);

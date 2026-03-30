@@ -13,8 +13,9 @@ import model.Request.*;
 import model.Response.*;
 import static java.lang.System.out;
 import shared.server.files.ServerFacade;
-import ui.EscapeSequences;
+
 import websocket.messages.ServerMessage;
+
 
 import static ui.EscapeSequences.*;
 
@@ -87,18 +88,15 @@ public class ChessClient implements NotificationHandler {
 
             out.print(ERASE_SCREEN);
             if (!loggedIn){
-                printLoggedOutMenu();}
+                Menus.printLoggedOutMenu();}
             else if (spectating) {
                 printSpectatingMenu();
             } else if (!inGame){
-                printLoggedInMenu();
+                Menus.printLoggedInMenu();
 
             } else{
-                printGameMenu();
+                Menus.printGameMenu();
             }
-
-
-
 
             printPrompt();
             String line = scanner.nextLine();
@@ -129,35 +127,7 @@ public class ChessClient implements NotificationHandler {
     private void printPrompt() {
         out.print(SET_TEXT_COLOR_WHITE + ">>> " + SET_TEXT_COLOR_GREEN);
     }
-    private void printLoggedOutMenu(){
 
-        out.print("REGISTER <Username> <Password> <Email> \n");
-        out.print("LOGIN <Username> <Password> \n");
-        out.print("QUIT \n");
-        out.print("HELP \n");
-
-    }
-
-    private void printLoggedInMenu(){
-
-        out.print("\nCREATE <GameName> \n");
-        out.print("LIST \n");
-        out.print("JOIN <ID> [White|Black]\n");
-        out.print("SPECTATE <ID>\n");
-        out.print("LOGOUT\n");
-        out.print("QUIT\n");
-        out.print("HELP \n");
-
-    }
-    private void printGameMenu(){
-        out.print("Redraw \n");
-        out.print("Move <Current Location> <New location> <PromotionType>\n");
-        out.print("Highlight <Piece Location> \n");
-        out.print("Leave\n");
-        out.print("Resign\n");
-        out.print("Help\n");
-
-    }
 
 
     public String eval(String input) {
@@ -237,12 +207,6 @@ public class ChessClient implements NotificationHandler {
             }
         }
         return "You are still in the game\n";
-
-
-
-
-
-
 
     }
 
@@ -460,11 +424,7 @@ public class ChessClient implements NotificationHandler {
             this.color = color;
             game = gameJ.game();
             BoardDrawer drawer = new BoardDrawer(color);
- //           drawer.drawBoard(game.getBoard());
             inGame = true;
-
-
-
 
 
 
@@ -508,7 +468,6 @@ public class ChessClient implements NotificationHandler {
 
             spectating = true;
 
-
             return "Spectating "+game.gameName()+" game.";
 
         }
@@ -517,12 +476,10 @@ public class ChessClient implements NotificationHandler {
     private String logout() throws Exception {
         Request.LogoutRequest request = new Request.LogoutRequest(authToken);
 
-
         LogoutResponse response = server.logoutUser(request,authToken);
         if (response.getMessage() != null){
             throw new Exception(response.getMessage());
         }
-
 
         spectating = false;
         clientName = null;
@@ -533,5 +490,3 @@ public class ChessClient implements NotificationHandler {
     }
 
 }
-
-
