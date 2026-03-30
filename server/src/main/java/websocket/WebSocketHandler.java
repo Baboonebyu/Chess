@@ -52,13 +52,38 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void Resign(UserGameCommand command, Session session) throws IOException, DataAccessException {
-        String username = command.getUserName();
+        String username = getUserName(session,authDAO.getAuth(command.getAuthToken()));
+        String stringGameId = String.valueOf(command.getGameID());
+        GameData game = gameDAO.getGame(stringGameId);
+
+        if (game.isOver()){
+            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            errorMessage.setErrorMessage("Error Game over. You can't Resign");
+            String msg = errorMessage.toString();
+
+            session.getRemote().sendString(msg);
+            return;
+        }
+
+
+        if(!Objects.equals(username, game.whiteUsername()) && !Objects.equals(username, game.blackUsername())){
+            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            errorMessage.setErrorMessage("Error Observers can't resign");
+            String msg = errorMessage.toString();
+
+            session.getRemote().sendString(msg);
+            return;
+        }
+
         String returnString = username+" has resigned.\n The game is over.";
         ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         message.setMessage(returnString);
         connections.broadcast(null,message, command.getGameID());
-        String stringGameId = String.valueOf(command.getGameID());
-        GameData game = gameDAO.getGame(stringGameId);
+
+
+
+
+
         gameDAO.updateGame(stringGameId,game.whiteUsername(),game.blackUsername(),game.gameName(),game.game(),true);
         game = gameDAO.getGame(stringGameId);
     }
@@ -71,17 +96,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         AuthData authData= authDAO.getAuth(command.getAuthToken());
 
-        if(authData == null)
-        {
-            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-            errorMessage.setErrorMessage("Error Unauthorized");
-            String msg = errorMessage.toString();
-
-            session.getRemote().sendString(msg);
-
-        }
-        assert authData != null;
-        String userName= authData.username();
+        String userName = getUserName(session, authData);
 
         model.GameData gameData = gameDAO.getGame(stringGameId);
         ChessGame game = gameData.game();
@@ -175,6 +190,21 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         }
 
+    private static String getUserName(Session session, AuthData authData) throws IOException {
+        if(authData == null)
+        {
+            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            errorMessage.setErrorMessage("Error Unauthorized");
+            String msg = errorMessage.toString();
+
+            session.getRemote().sendString(msg);
+
+        }
+        assert authData != null;
+        String userName= authData.username();
+        return userName;
+    }
+
     private void staleMateHandler(String s, Integer gameID) throws DataAccessException, IOException {
         String stringGameId = String.valueOf(gameID);
         GameData game = gameDAO.getGame(stringGameId);
@@ -213,7 +243,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void Leave(UserGameCommand command, Session session) throws IOException, DataAccessException {
 
-        String username = command.getUserName();
+        String username = getUserName(session,authDAO.getAuth(command.getAuthToken()));
         String returnString = username+" has left the game.";
         ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         message.setMessage(returnString);
