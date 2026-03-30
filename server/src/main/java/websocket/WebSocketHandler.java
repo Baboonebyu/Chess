@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 
 import dataaccess.DataAccessException;
 import io.javalin.websocket.*;
+import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import server.Handler;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static server.Handler.authDAO;
 import static server.Handler.gameDAO;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
@@ -63,10 +65,24 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void Move(UserGameCommand command, Session session) throws DataAccessException, IOException {
         String stringGameId = String.valueOf(command.getGameID());
-        String userName = command.getUserName();
+
         ChessMove move = command.getMove();
         model.GameData gameData = gameDAO.getGame(stringGameId);
         ChessGame game = gameData.game();
+        AuthData authData= authDAO.getAuth(command.getAuthToken());
+
+        if(authData == null)
+        {
+            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            errorMessage.setErrorMessage("Error Unauthorized");
+            String msg = errorMessage.toString();
+
+            session.getRemote().sendString(msg);
+
+        }
+        assert authData != null;
+        String userName= authData.username();
+
 
         if (gameData.isOver()){
             ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
@@ -79,14 +95,31 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
 
+        if(game.getTeamTurn() == ChessGame.TeamColor.WHITE && !Objects.equals(userName, gameData.whiteUsername())){
+            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            errorMessage.setErrorMessage("Error Not valid move");
+            String msg = errorMessage.toString();
 
-   //     System.out.println(game.getBoard());
+            session.getRemote().sendString(msg);
+            return;
+
+        } else if (game.getTeamTurn() == ChessGame.TeamColor.BLACK && !Objects.equals(userName, gameData.blackUsername())) {
+            ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            errorMessage.setErrorMessage("Error Not valid move");
+            String msg = errorMessage.toString();
+
+            session.getRemote().sendString(msg);
+            return;
+        }
+
+
+        //     System.out.println(game.getBoard());
 
 
 
         try {
 
-            System.out.println(move);
+            //System.out.println(move);
 
             game.makeMove(move);
 
