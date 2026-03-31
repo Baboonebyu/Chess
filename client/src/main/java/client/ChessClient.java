@@ -57,7 +57,10 @@ public class ChessClient implements NotificationHandler {
             System.out.println( SET_TEXT_COLOR_WHITE + message.getMessage());
 
         } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
-            System.out.println(SET_TEXT_COLOR_RED+ "Error from server");
+            //todo remove
+            System.out.println(SET_TEXT_COLOR_RED +  message.getErrorMessage());
+
+    //        System.out.println(SET_TEXT_COLOR_RED+ "Error from server");
         } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
             Gson gson = new Gson();
             game = gson.fromJson(message.getGame(),ChessGame.class);
@@ -171,17 +174,12 @@ public class ChessClient implements NotificationHandler {
               promote = params[2];
             }
 
-            ws.Move(authToken,Integer.valueOf(currentGameID),clientName,currentCords,newCords,promote);
-
-
-
+            ws.move(authToken,Integer.valueOf(currentGameID),clientName,currentCords,newCords,promote);
 
             return "";
 
         }
         throw new Exception("Invalid format: Expected CurrentPosition NewPosition\n");
-
-
 
     }
 
@@ -192,8 +190,6 @@ public class ChessClient implements NotificationHandler {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-
-
 
         out.print("Are you Sure Yes/No\n");
         printPrompt();
@@ -207,15 +203,14 @@ public class ChessClient implements NotificationHandler {
             }
         }
         return "You are still in the game\n";
-
     }
 
     private  String leave() throws Exception {
-        if(!inGame){
+        if(!inGame && !spectating){
             throw new Exception("Invalid Command");
         }
 
-        ws.Leave(authToken,Integer.valueOf(currentGameID),clientName);
+        ws.leave(authToken,Integer.valueOf(currentGameID),clientName);
 
         spectating = false;
         inGame = false;
@@ -236,6 +231,7 @@ public class ChessClient implements NotificationHandler {
     }
 
     private String help() {
+        out.print(SET_TEXT_COLOR_GREEN);
         if (!loggedIn){
            out.print("To login or register please enter the command word \n");
            out.print("Followed by the necessary arguments as found in the <>\n");

@@ -23,7 +23,7 @@ public class BoardDrawer {
 
     int rowCount = 1;
     int colCount =1;
-    int header = 8;
+    String[] header ={"9","8", "7", "6", "5", "4", "3", "2", "1"};
     int headerMod = -1;
 
 
@@ -34,6 +34,7 @@ public class BoardDrawer {
     public void setUp(){
         if (Objects.equals(color, "BLACK")){
             rowHeader = new String[]{" h ", " g ", " f ", " e ", " d ", " c ", " b ", " a "};
+            header = new String[]{"0","1", "2", "3", "4","5","6","7","8"};
             pRow = 1;
             pCol = 8;
             modCol = -1;
@@ -48,6 +49,7 @@ public class BoardDrawer {
     public void drawBoard(ChessBoard board){
         this.board = board;
        //top row
+        out.print("\n");
         out.print(ERASE_SCREEN);
         setUp();
         letterLine();
@@ -56,7 +58,7 @@ public class BoardDrawer {
         while (rowCount <= 8) {
 
             out.print(SET_BG_COLOR_DARK_GREY);
-            out.print(" "+header+" ");
+            out.print(" "+ header[rowCount] +" ");
             swapState();
             while (colCount <= 8) {
                 printPiece();
@@ -66,9 +68,9 @@ public class BoardDrawer {
             }
             out.print(SET_BG_COLOR_DARK_GREY);
             pCol = cInit ;
-            out.print(" "+header+" ");
+            out.print(" "+header[rowCount]+" ");
 
-            header+=headerMod;
+          //  header+=headerMod;
             colCount = 1;
         finishLine();
         pRow += modRow;

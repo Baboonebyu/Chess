@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
+import static ui.EscapeSequences.*;
 import java.util.Map;
 
 public class WebSocketFacade extends Endpoint {
@@ -66,7 +67,7 @@ public class WebSocketFacade extends Endpoint {
 
     }
 
-    public void Leave(String authToken, Integer gameID,String userName) throws Exception {
+    public void leave(String authToken, Integer gameID, String userName) throws Exception {
 
         try {
             UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.LEAVE,authToken,gameID,userName);
@@ -90,7 +91,7 @@ public class WebSocketFacade extends Endpoint {
 
     }
 
-    public void Move(String authToken, Integer gameID, String userName, String currentCords, String newCords,String promote) throws Exception {
+    public void move(String authToken, Integer gameID, String userName, String currentCords, String newCords, String promote) throws Exception {
 
         //convert cords to chess move
 
@@ -125,8 +126,34 @@ public class WebSocketFacade extends Endpoint {
 
         String[] currentSplit = currentCords.split("");
 
+        if (currentSplit.length != 2){
+            System.out.println(SET_TEXT_COLOR_RED+"Error: invalid current position"+SET_TEXT_COLOR_GREEN);
+            return;
+        }
+
+
         String[] newSplit = newCords.split("");
+        if (newSplit.length != 2){
+            System.out.println(SET_TEXT_COLOR_RED+"Error: invalid new position"+SET_TEXT_COLOR_GREEN);
+            return;
+        }
+
+
+        if(valuemap.get((currentSplit[0])) == null
+        ){
+            System.out.println(SET_TEXT_COLOR_RED+"Error: invalid current position"+SET_TEXT_COLOR_GREEN);
+            return;
+        }
+        else if(valuemap.get((newSplit[0])) == null
+        ){
+            System.out.println(SET_TEXT_COLOR_RED+"Error: invalid new position"+SET_TEXT_COLOR_GREEN);
+            return;
+        }
+
+
+
         ChessPosition currentPos = new ChessPosition( Integer.parseInt(currentSplit[1]),valuemap.get((currentSplit[0])));
+
         ChessPosition newPos = new ChessPosition(Integer.parseInt(newSplit[1]),valuemap.get((newSplit[0])));
         ChessPiece.PieceType promoteType = promotemap.get(promote);
 

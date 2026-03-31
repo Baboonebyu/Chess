@@ -98,8 +98,9 @@ public class ChessGame {
             throw new InvalidMoveException("Not your turn");
         }
 
-        if(isInCheck(piece.getTeamColor())){
-            throw new InvalidMoveException("in check");
+        //todo see if this fixes it
+        if(isInCheckmate(piece.getTeamColor())){
+            throw new InvalidMoveException("in checkMate");
         }
         if( moveList.contains(move)){
 

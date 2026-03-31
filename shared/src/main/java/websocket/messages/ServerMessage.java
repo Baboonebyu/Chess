@@ -32,6 +32,10 @@ public class ServerMessage {
 
     }
 
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
     public String getGame() {
         return game;
     }

@@ -44,6 +44,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case MAKE_MOVE -> move(command,ctx.session);
             }
         } catch (Exception ex) {
+            System.out.print(ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -150,7 +151,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
             String returnString = userName+" moved "+move.getStartPosition().getRow()+ "," +move.getStartPosition().getColumn()+
-                    " to" + move.getEndPosition().getRow()+","+ move.getEndPosition().getColumn();
+                    " to " + move.getEndPosition().getRow()+","+ move.getEndPosition().getColumn();
             ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
             message.setMessage(returnString);
             connections.broadcast(session,message, command.getGameID());
@@ -225,7 +226,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         GameData game = gameDAO.getGame(stringGameId);
         gameDAO.updateGame(stringGameId,game.whiteUsername(),game.blackUsername(),game.gameName(),game.game(),true);
 
-        String returnString = userName+" is in Check\n GameOver!";
+        String returnString = userName+" is in CheckMate\n GameOver!";
         ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         message.setMessage(returnString);
         connections.broadcast(null,message, gameID);
