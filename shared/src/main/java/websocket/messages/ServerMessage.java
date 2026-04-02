@@ -17,14 +17,27 @@ public class ServerMessage {
     String game;
     String errorMessage;
 
+    public String getChessMoves() {
+        return chessMoves;
+    }
+
+    public void setChessMoves(String chessMoves) {
+        this.chessMoves = chessMoves;
+    }
+
+    String chessMoves;
+
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
+
+
     public enum ServerMessageType {
         LOAD_GAME,
         ERROR,
-        NOTIFICATION
+        NOTIFICATION,
+        Highlight
     }
 
     public ServerMessage(ServerMessageType type) {

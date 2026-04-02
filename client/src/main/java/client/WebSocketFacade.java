@@ -19,6 +19,18 @@ public class WebSocketFacade extends Endpoint {
 
     Session session;
     NotificationHandler notificationHandler;
+    Map<String, Integer> valuemap = Map.ofEntries(
+            Map.entry("a",1),
+            Map.entry("b",2),
+            Map.entry("c",3),
+            Map.entry("d",4),
+            Map.entry("e",5),
+            Map.entry("f",6),
+            Map.entry("g",7),
+            Map.entry("h",8)
+
+
+    );
 
     public WebSocketFacade(String url, NotificationHandler notificationHandler) throws Exception {
         try {
@@ -32,8 +44,7 @@ public class WebSocketFacade extends Endpoint {
             //set message handler
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
-                public void onMessage(String msg) {
-                    ServerMessage message = new Gson().fromJson(msg, ServerMessage.class);
+                public void onMessage(String msg) {ServerMessage message = new Gson().fromJson(msg, ServerMessage.class);
                     notificationHandler.notify(message);
 
 
@@ -95,18 +106,7 @@ public class WebSocketFacade extends Endpoint {
 
         //convert cords to chess move
 
-        Map<String, Integer> valuemap = Map.ofEntries(
-                Map.entry("a",1),
-                Map.entry("b",2),
-                Map.entry("c",3),
-                Map.entry("d",4),
-                Map.entry("e",5),
-                Map.entry("f",6),
-                Map.entry("g",7),
-                Map.entry("h",8)
 
-
-        );
         Map<String, ChessPiece.PieceType> promotemap = Map.ofEntries(
                 Map.entry("queen",ChessPiece.PieceType.QUEEN),
                 Map.entry("rook",ChessPiece.PieceType.ROOK),
@@ -171,5 +171,32 @@ public class WebSocketFacade extends Endpoint {
             throw new Exception();
         }
 
+    }
+
+    public void highLight(String authToken, Integer gameID, String cords) throws Exception {
+
+        String[] cordsSplit = cords.split("");
+
+        if (cordsSplit.length != 2){
+            System.out.println(SET_TEXT_COLOR_RED+"Error: invalid Position"+SET_TEXT_COLOR_GREEN);
+            return;
+        }
+
+        if(valuemap.get((cordsSplit[0])) == null
+        ){
+            System.out.println(SET_TEXT_COLOR_RED+"Error: invalid current position"+SET_TEXT_COLOR_GREEN);
+            return;
+        }
+
+        ChessPosition currentPos = new ChessPosition( Integer.parseInt(cordsSplit[1]),valuemap.get((cordsSplit[0])));
+
+        try {
+            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.GET_MOVES,authToken,gameID,null);
+            command.setPosition(currentPos);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+        }
+        catch (IOException e){
+            throw new Exception();
+        }
     }
 }

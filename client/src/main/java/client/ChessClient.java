@@ -4,15 +4,19 @@ package client;
 import chess.ChessBoard;
 import chess.ChessGame;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import model.GameData;
 import model.Request;
 import model.Request.*;
 import model.Response.*;
 import static java.lang.System.out;
 import shared.server.files.ServerFacade;
+import chess.ChessMove;
 
 import websocket.messages.ServerMessage;
 
@@ -23,6 +27,7 @@ import static ui.EscapeSequences.*;
 public class ChessClient implements NotificationHandler {
     private final ServerFacade server;
     private final WebSocketFacade ws;
+
 
     public ChessClient(String serverUrl) throws Exception {
         server = new ServerFacade(serverUrl);
@@ -55,6 +60,20 @@ public class ChessClient implements NotificationHandler {
 
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
             System.out.println( SET_TEXT_COLOR_WHITE + message.getMessage());
+
+        } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.Highlight) {
+            Gson gson = new Gson();
+
+
+            String stringMoves = message.getChessMoves();
+
+            Type listType = new TypeToken<ArrayList<ChessMove>>(){}.getType();
+            ArrayList<ChessMove> chessMoves = gson.fromJson(stringMoves, listType);
+
+            out.print(chessMoves);
+
+
+
 
         } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
             //todo remove
@@ -149,7 +168,7 @@ public class ChessClient implements NotificationHandler {
                 case "logout" -> logout();
                 case "redraw" -> redraw();
                 case "move" -> makeMove(params);
-         //       case "highlight" -> highlight();
+                case "highlight" -> highlight(params);
                 case "leave" -> leave();
                 case "resign" -> resign();
 
@@ -160,6 +179,17 @@ public class ChessClient implements NotificationHandler {
             out.print(SET_TEXT_COLOR_RED);
             return ex.getMessage();
         }
+    }
+
+    private String highlight(String[] params) throws Exception {
+        if (params.length != 1){
+            throw new Exception("Invalid format: Expected Piece position\n");
+        }
+        String cords = params[0];
+        ws.highLight(authToken,Integer.valueOf(currentGameID),cords);
+
+
+        return "";
     }
 
     private String makeMove(String[] params) throws Exception {
@@ -419,12 +449,14 @@ public class ChessClient implements NotificationHandler {
             JoinGameResponse response = server.joinGame(request, authToken);
             this.color = color;
             game = gameJ.game();
-            BoardDrawer drawer = new BoardDrawer(color);
+           // BoardDrawer drawer = new BoardDrawer(color);
             inGame = true;
 
-
+            redraw();
 
             return "Joining "+ gameJ.gameName()+ " game.\n";
+
+
 
         }
         throw new Exception("Invalid format: Expected GameID Color\n");

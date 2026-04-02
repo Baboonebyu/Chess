@@ -16,6 +16,7 @@ import websocket.messages.ServerMessage;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Objects;
 
 import static server.Handler.authDAO;
@@ -42,11 +43,27 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case LEAVE -> leave(command, ctx.session);
                 case RESIGN -> resign(command, ctx.session);
                 case MAKE_MOVE -> move(command,ctx.session);
+                case GET_MOVES -> getMoves(command,ctx.session);
             }
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
             ex.printStackTrace();
         }
+    }
+
+    private void getMoves(UserGameCommand command, Session session) throws DataAccessException, IOException {
+        String stringGameId = String.valueOf(command.getGameID());
+        GameData gamedata = gameDAO.getGame(stringGameId);
+        ChessGame game = gamedata.game();
+        Collection<ChessMove> Moves = game.validMoves(command.getPosition());
+
+        Gson gson = new Gson();
+        String movesString = gson.toJson(Moves);
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.Highlight);
+        message.setChessMoves(movesString);
+        String msg = message.toString();
+        session.getRemote().sendString(msg);
+
     }
 
     private void resign(UserGameCommand command, Session session) throws IOException, DataAccessException {
@@ -150,7 +167,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
 
 
-            String returnString = userName+" moved "+move.getStartPosition().getRow()+ "," +move.getStartPosition().getColumn()+
+            String returnString = "\n"+userName+" moved "+move.getStartPosition().getRow()+ "," +move.getStartPosition().getColumn()+
                     " to " + move.getEndPosition().getRow()+","+ move.getEndPosition().getColumn();
             ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
             message.setMessage(returnString);
