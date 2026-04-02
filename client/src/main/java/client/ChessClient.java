@@ -89,6 +89,8 @@ public class ChessClient implements NotificationHandler {
            // ChessBoard board = game.getBoard();
 
             GameData data = gson.fromJson(message.getGame(),GameData.class);
+
+     //       out.print(data);
             game = data.game();
            // ChessBoard board2 = game2.getBoard();
 
@@ -421,7 +423,9 @@ public class ChessClient implements NotificationHandler {
                 throw new Exception("BLACK is already taken. \n");
             }
             this.color = color;
-            try { ws.connect(authToken, Integer.valueOf(currentGameID), clientName);}catch (Exception e){
+            try {
+
+                ws.connect(authToken, Integer.valueOf(currentGameID), clientName,color);}catch (Exception e){
                 throw new Exception("Error connecting to the game");
             }
             JoinGameRequest request = new JoinGameRequest();
@@ -457,7 +461,7 @@ public class ChessClient implements NotificationHandler {
                 throw new Exception("Invalid Game ID \n");
             }
             currentGameID = String.valueOf((gameID));
-            try { ws.connect(authToken, Integer.valueOf(currentGameID), clientName);}catch (Exception e){
+            try { ws.connect(authToken, Integer.valueOf(currentGameID), clientName,null);}catch (Exception e){
                 throw new Exception("Error connecting to the game");
             }
             GameData game = games.get(gameID - 1);

@@ -176,7 +176,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
             Gson gson = new Gson();
-            String returnGame= gson.toJson(gameDAO.getGame(stringGameId).game());
+            String returnGame= gson.toJson(gameDAO.getGame(stringGameId));
 
             ServerMessage gameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
             gameMessage.setGame(returnGame);
@@ -287,11 +287,18 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 return;
             }
 
+        GameData gameData = gameDAO.getGame(stringGameId);
+            String role = role = "spectator";
+            if ( command.getRole() != null){
+                role = command.getRole();
+            }
+
+            String username = command.getUserName();
 
 
-        connections.add(session,command.getGameID());
-        String username = command.getUserName();
-        String returnString = username+" has joined the game.";
+            connections.add(session,command.getGameID());
+
+        String returnString = username+" has joined the game as "+role ;
         ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         message.setMessage(returnString);
         connections.broadcast(session,message, command.getGameID());
@@ -299,7 +306,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
         Gson gson = new Gson();
-        String game= gson.toJson(gameDAO.getGame(stringGameId));
+        String game= gson.toJson(gameData);
 
         ServerMessage gameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
         gameMessage.setGame(game);

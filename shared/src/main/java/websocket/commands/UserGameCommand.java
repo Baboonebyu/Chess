@@ -23,6 +23,7 @@ public class UserGameCommand {
 
     private  ChessMove move = null;
     private  ChessPosition position = null;
+    private String role = null;
 
 
 
@@ -31,6 +32,7 @@ public class UserGameCommand {
         this.authToken = authToken;
         this.gameID = gameID;
         this.userName = userName;
+
 
 
     }
@@ -48,6 +50,14 @@ public class UserGameCommand {
 
     public void setMove(ChessMove move) {
         this.move = move;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public enum CommandType {
