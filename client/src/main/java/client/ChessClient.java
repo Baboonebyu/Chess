@@ -70,7 +70,9 @@ public class ChessClient implements NotificationHandler {
             Type listType = new TypeToken<ArrayList<ChessMove>>(){}.getType();
             ArrayList<ChessMove> chessMoves = gson.fromJson(stringMoves, listType);
 
-            out.print(chessMoves);
+          //  out.print(chessMoves);
+            BoardDrawer drawer = new BoardDrawer(color);
+            drawer.drawBoard(game.getBoard(),chessMoves);
 
 
 
@@ -84,8 +86,9 @@ public class ChessClient implements NotificationHandler {
             Gson gson = new Gson();
             game = gson.fromJson(message.getGame(),ChessGame.class);
 
+            ChessBoard board = game.getBoard();
             BoardDrawer drawer = new BoardDrawer(color);
-            drawer.drawBoard(game.getBoard());
+            drawer.drawBoard(game.getBoard(),null);
 
 
         } else{
@@ -250,13 +253,13 @@ public class ChessClient implements NotificationHandler {
 
     private String redraw() throws Exception {
 
-        if(!inGame){
+        if(!inGame && !spectating){
             throw new Exception("Invalid Command");
         }
 
 
         BoardDrawer drawer = new BoardDrawer(color);
-        drawer.drawBoard(game.getBoard());
+        drawer.drawBoard(game.getBoard(),null);
         return "";
     }
 
@@ -492,7 +495,7 @@ public class ChessClient implements NotificationHandler {
             currentGameID = String.valueOf((gameID));
             ChessGame currentGame = game.game();
             BoardDrawer drawer = new BoardDrawer("WHITE");
-            drawer.drawBoard(currentGame.getBoard());
+     //       drawer.drawBoard(currentGame.getBoard(), null);
 
             spectating = true;
 

@@ -1,10 +1,9 @@
 package client;
 import static java.lang.System.out;
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
 
+import chess.*;
+
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static ui.EscapeSequences.*;
@@ -13,6 +12,9 @@ import static ui.EscapeSequences.*;
 public class BoardDrawer {
     String color;
     ChessBoard board;
+    ChessPosition current = new ChessPosition(100,100);
+    ArrayList<ChessPosition> valid = new ArrayList<ChessPosition>();
+
     public BoardDrawer(String color) {
         this.color = color;
     }
@@ -46,13 +48,22 @@ public class BoardDrawer {
 
 
 
-    public void drawBoard(ChessBoard board){
+    public void drawBoard(ChessBoard board, ArrayList<ChessMove> highlight){
         this.board = board;
        //top row
         out.print("\n");
         out.print(ERASE_SCREEN);
         setUp();
         letterLine();
+
+        if (highlight != null){
+            current = highlight.getFirst().getStartPosition();
+            for (ChessMove move: highlight){
+                valid.add(move.getEndPosition());
+            }
+
+        }
+
 
 
         while (rowCount <= 8) {
@@ -61,6 +72,17 @@ public class BoardDrawer {
             out.print(" "+ header[rowCount] +" ");
             swapState();
             while (colCount <= 8) {
+                if (valid.contains(new ChessPosition(pRow,pCol))){
+                    if(Objects.equals(colorState, "Black")) {
+                        out.print(SET_BG_COLOR_GREEN);
+                    }
+                    else {
+                        out.print(SET_BG_COLOR_DARK_GREEN);
+                    }
+                }
+                if(Objects.equals(current, new ChessPosition(pRow, pCol))){
+                    out.print(SET_BG_COLOR_YELLOW);
+                }
                 printPiece();
                 colCount +=1;
                 pCol += modCol;
