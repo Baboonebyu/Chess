@@ -84,9 +84,17 @@ public class ChessClient implements NotificationHandler {
     //        System.out.println(SET_TEXT_COLOR_RED+ "Error from server");
         } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
             Gson gson = new Gson();
-            game = gson.fromJson(message.getGame(),ChessGame.class);
+          //  game = gson.fromJson(message.getGame(),ChessGame.class);
 
-            ChessBoard board = game.getBoard();
+           // ChessBoard board = game.getBoard();
+
+            GameData data = gson.fromJson(message.getGame(),GameData.class);
+            game = data.game();
+           // ChessBoard board2 = game2.getBoard();
+
+
+
+
             BoardDrawer drawer = new BoardDrawer(color);
             drawer.drawBoard(game.getBoard(),null);
 
@@ -440,10 +448,11 @@ public class ChessClient implements NotificationHandler {
             if (color.equals("BLACK") && gameJ.blackUsername() != null){
                 throw new Exception("BLACK is already taken. \n");
             }
-
+            this.color = color;
             try { ws.connect(authToken, Integer.valueOf(currentGameID), clientName);}catch (Exception e){
                 throw new Exception("Error connecting to the game");
             }
+
 
 
             JoinGameRequest request = new JoinGameRequest();
@@ -455,7 +464,7 @@ public class ChessClient implements NotificationHandler {
            // BoardDrawer drawer = new BoardDrawer(color);
             inGame = true;
 
-            redraw();
+           // redraw();
 
             return "Joining "+ gameJ.gameName()+ " game.\n";
 
