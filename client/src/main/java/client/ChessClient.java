@@ -108,16 +108,11 @@ public class ChessClient implements NotificationHandler {
     }
 
 
-
-
-
     private void loopMain(){
         out.print(SET_TEXT_COLOR_GREEN+"Welcome to Chess, Log in or type HELP for more info \n\n");
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")&& !result.equals("QUIT")) {
-
-
 
             out.print(ERASE_SCREEN);
             if (!loggedIn){
@@ -148,7 +143,6 @@ public class ChessClient implements NotificationHandler {
         loggedIn = false;
         inGame = false;
     }
-
     private void printSpectatingMenu() {
         out.print("\nRedraw \n");
         out.print("Highlight <Piece Location> \n");
@@ -160,9 +154,6 @@ public class ChessClient implements NotificationHandler {
     private void printPrompt() {
         out.print(SET_TEXT_COLOR_WHITE + ">>> " + SET_TEXT_COLOR_GREEN);
     }
-
-
-
     public String eval(String input) {
         try {
             String[] tokens = input.toLowerCase().split(" ");
@@ -182,8 +173,6 @@ public class ChessClient implements NotificationHandler {
                 case "highlight" -> highlight(params);
                 case "leave" -> leave();
                 case "resign" -> resign();
-
-
                 default -> help();
             };
         } catch (Exception ex) {
@@ -191,15 +180,12 @@ public class ChessClient implements NotificationHandler {
             return ex.getMessage();
         }
     }
-
     private String highlight(String[] params) throws Exception {
         if (params.length != 1){
             throw new Exception("Invalid format: Expected Piece position\n");
         }
         String cords = params[0];
         ws.highLight(authToken,Integer.valueOf(currentGameID),cords);
-
-
         return "";
     }
 
@@ -214,9 +200,7 @@ public class ChessClient implements NotificationHandler {
             if (params.length >2){
               promote = params[2];
             }
-
             ws.move(authToken,Integer.valueOf(currentGameID),clientName,currentCords,newCords,promote);
-
             return "";
 
         }
@@ -252,11 +236,9 @@ public class ChessClient implements NotificationHandler {
         }
 
         ws.leave(authToken,Integer.valueOf(currentGameID),clientName);
-
         spectating = false;
         inGame = false;
         return "You have left the game";
-
     }
 
     private String redraw() throws Exception {
@@ -373,10 +355,7 @@ public class ChessClient implements NotificationHandler {
             if (response.getMessage() != null){
                 throw new Exception(response.getMessage());
             }
-
-
             return "Your game was created!\n";
-
         }
         throw new Exception("Invalid format: Expected GameName\n");
 
@@ -388,9 +367,6 @@ public class ChessClient implements NotificationHandler {
         if(games.isEmpty()){
             return "No games currently";
         }
-
-
-
         StringBuilder sb = new StringBuilder();
         int counter = 1;
 
@@ -418,18 +394,14 @@ public class ChessClient implements NotificationHandler {
         }
         return sb.toString();
     }
-
     private String join(String[] params) throws Exception {
         if (params.length == 2) {
-
             int gameID;
             try {
                 gameID = Integer.parseInt(params[0]);
             } catch (NumberFormatException e) {
                 throw new Exception("Invalid Game Id: Expected Number\n");
             }
-
-
             String color = params[1];
             color = color.toUpperCase(Locale.ROOT);
             if (!color.equals("WHITE") && !color.equals("BLACK")) {
@@ -452,20 +424,13 @@ public class ChessClient implements NotificationHandler {
             try { ws.connect(authToken, Integer.valueOf(currentGameID), clientName);}catch (Exception e){
                 throw new Exception("Error connecting to the game");
             }
-
-
-
             JoinGameRequest request = new JoinGameRequest();
             request.setPlayerColor(color);
             request.setGameID(gameJ.gameID());
             JoinGameResponse response = server.joinGame(request, authToken);
             this.color = color;
             game = gameJ.game();
-           // BoardDrawer drawer = new BoardDrawer(color);
             inGame = true;
-
-           // redraw();
-
             return "Joining "+ gameJ.gameName()+ " game.\n";
 
 
@@ -473,7 +438,6 @@ public class ChessClient implements NotificationHandler {
         }
         throw new Exception("Invalid format: Expected GameID Color\n");
     }
-
     private  ArrayList<GameData> getGames() throws Exception {
         ListGamesRequest request = new ListGamesRequest();
         ListGamesResponse response = server.listGames(request,authToken);
@@ -483,14 +447,11 @@ public class ChessClient implements NotificationHandler {
     private String spectate(String[] params) throws Exception {
         if (params.length == 1) {
             int gameID;
-
-
             try {
                 gameID = Integer.parseInt(params[0]);
             } catch (NumberFormatException e) {
                 throw new Exception("Invalid Game Id: Expected Number\n");
             }
-
             ArrayList<GameData> games = getGames();
             if (gameID-1 > games.size()){
                 throw new Exception("Invalid Game ID \n");
@@ -499,15 +460,11 @@ public class ChessClient implements NotificationHandler {
             try { ws.connect(authToken, Integer.valueOf(currentGameID), clientName);}catch (Exception e){
                 throw new Exception("Error connecting to the game");
             }
-
             GameData game = games.get(gameID - 1);
             currentGameID = String.valueOf((gameID));
             ChessGame currentGame = game.game();
             BoardDrawer drawer = new BoardDrawer("WHITE");
-     //       drawer.drawBoard(currentGame.getBoard(), null);
-
             spectating = true;
-
             return "Spectating "+game.gameName()+" game.";
 
         }
@@ -515,12 +472,10 @@ public class ChessClient implements NotificationHandler {
     }
     private String logout() throws Exception {
         Request.LogoutRequest request = new Request.LogoutRequest(authToken);
-
         LogoutResponse response = server.logoutUser(request,authToken);
         if (response.getMessage() != null){
             throw new Exception(response.getMessage());
         }
-
         spectating = false;
         clientName = null;
         authToken = null;
@@ -528,5 +483,4 @@ public class ChessClient implements NotificationHandler {
         currentGameID = null;
         return "Goodbye! \n";
     }
-
 }

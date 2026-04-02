@@ -55,10 +55,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         String stringGameId = String.valueOf(command.getGameID());
         GameData gamedata = gameDAO.getGame(stringGameId);
         ChessGame game = gamedata.game();
-        Collection<ChessMove> Moves = game.validMoves(command.getPosition());
+        Collection<ChessMove> moves = game.validMoves(command.getPosition());
 
         Gson gson = new Gson();
-        String movesString = gson.toJson(Moves);
+        String movesString = gson.toJson(moves);
         ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.Highlight);
         message.setChessMoves(movesString);
         String msg = message.toString();
