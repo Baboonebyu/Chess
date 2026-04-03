@@ -56,7 +56,7 @@ public class BoardDrawer {
         setUp();
         letterLine();
 
-        if (highlight != null){
+        if (highlight != null && !highlight.isEmpty()){
             current = highlight.getFirst().getStartPosition();
             for (ChessMove move: highlight){
                 valid.add(move.getEndPosition());
